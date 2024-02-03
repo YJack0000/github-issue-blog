@@ -1,31 +1,20 @@
-import { signOut } from "@/config/auth";
+'use client'
+import { signIn, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/Button";
-import Link from "next/link";
 
-export function SignIn(
-  props: Omit<React.ComponentPropsWithRef<typeof Link>, 'href'>
+export function SignIn(props: React.ComponentPropsWithRef<typeof Button>
 ) {
-  return (
-      <Link {...props} href="api/auth/signin">
-        <Button>
-            Sign In
+    return (
+        <Button className="w-full p-0" {...props} onClick={() => signIn()}>
+            Sign In 
         </Button>
-      </Link>
-  );
+    );
 }
 
 export function SignOut(props: React.ComponentPropsWithRef<typeof Button>) {
-  return (
-    <form
-      action={async () => {
-        "use server";
-        await signOut();
-      }}
-      className="w-full"
-    >
-      <Button className="w-full p-0" {...props}>
-        Sign Out
-      </Button>
-    </form>
-  );
+    return (
+        <Button className="w-full p-0" {...props} onClick={() => signOut()}>
+            Sign Out
+        </Button>
+    );
 }

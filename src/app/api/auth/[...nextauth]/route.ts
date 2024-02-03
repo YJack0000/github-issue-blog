@@ -1,12 +1,20 @@
-import { handlers } from "@/config/auth";
-import type { NextRequest } from "next/server";
+import NextAuth from "next-auth"
+import GithubProvider from "next-auth/providers/github"
 
-const { GET: AuthGET, POST } = handlers;
-export { POST };
+console.log({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    })
 
-export async function GET(request: NextRequest) {
-  // Do something with request
-  const response = await AuthGET(request);
-  // Do something with response
-  return response;
+export const authOptions = {
+  providers: [
+    GithubProvider({
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string,
+    }),
+  ],
 }
+
+const handler = NextAuth(authOptions)
+
+export { handler as GET, handler as POST }
