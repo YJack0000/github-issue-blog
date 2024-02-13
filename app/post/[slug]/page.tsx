@@ -1,5 +1,6 @@
 import Link from "next/link"
 import Markdown from "react-markdown"
+import rehypeRaw from "rehype-raw"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import { fetchPostData } from "@/lib/github"
@@ -62,9 +63,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
                         </div>
                         <Markdown
                             className="prose-lg text-base-content"
-                            children={post.body}
                             components={{ code: CodeBlock }}
-                        />
+                            rehypePlugins={[rehypeRaw]}
+                        >
+                            {post.body}
+                        </Markdown>
                     </div>
                 </section>
             </div>
