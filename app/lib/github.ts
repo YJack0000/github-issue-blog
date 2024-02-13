@@ -79,7 +79,6 @@ export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
 }
 
 const _postDataMapper = (id: string, data: any): Post => {
-    console.log(JSON.stringify(data))
     return {
         id: parseInt(id),
         author: {
