@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/api/auth/[...nextauth]/route"
 
 const GITHUB_GRAPHQL_API = "https://api.github.com/graphql"
+const GITHUB_BLOG_POST_OWNER = process.env.GITHUB_BLOG_POST_OWNER
 const GITHUB_BLOG_POST_REPO = process.env.GITHUB_BLOG_POST_REPO
 
 const _postsMapper = (data: any): Promise<PostPreview[]> => {
@@ -28,7 +29,7 @@ export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
     const after = cursor ? `after: "${cursor}",` : ""
     const query = `
       query {
-        repository(owner: "${session.user.name}", name: "${GITHUB_BLOG_POST_REPO}") {
+        repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
           issues(${after} first: 3, states: [OPEN]) {
             edges {
               node {
@@ -111,7 +112,7 @@ export const fetchPostData = async (id: string): Promise<Post> => {
     const session = await getServerSession(authOptions)
     const query = `
       query {
-        repository(owner: "${session.user.name}", name: "${GITHUB_BLOG_POST_REPO}") {
+        repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
           issue(number: ${id}) {
             title
             author {
@@ -166,7 +167,7 @@ export const getAuthor = async (): Promise<string> => {
     const session = await getServerSession(authOptions)
     const query = `
       query {
-        repository(owner: "${session.user.name}", name: "${GITHUB_BLOG_POST_REPO}") {
+        repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
             owner { 
                 login
             }
