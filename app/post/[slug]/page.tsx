@@ -2,9 +2,9 @@ import Link from "next/link"
 import Markdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism"
-import { getServerSession } from "next-auth/next"
 import { fetchPostData } from "@/lib/github"
 import PostForm from "@/components/post/PostForm"
+import AuthProtectedWrapper from "@/components/auth/AuthorProtectedWrapper"
 
 const CodeBlock = ({ language, value }: any) => (
     <SyntaxHighlighter language={language} style={dark}>
@@ -13,7 +13,6 @@ const CodeBlock = ({ language, value }: any) => (
 )
 
 export default async function Page({ params }: { params: { slug: string } }) {
-    const session = await getServerSession()
     const post = await fetchPostData(params.slug)
     return (
         <>
@@ -51,15 +50,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
                                 {post.author.name}
                             </div>
                             <div>Sun Apr 30 2023</div>
-                    {session?.user ? (
-                        <PostForm
-                            header="編輯文章"
-                            id={post.id}
-                            title={post.title}
-                            tags={post.tags}
-                            body={post.body}
-                        />
-                    ) : null}
+                            <AuthProtectedWrapper holder={null}>
+                                <PostForm
+                                    header="編輯文章"
+                                    id={post.id}
+                                    title={post.title}
+                                    tags={post.tags}
+                                    body={post.body}
+                                />
+                            </AuthProtectedWrapper>
                         </div>
                         <Markdown
                             className="prose-lg text-base-content"

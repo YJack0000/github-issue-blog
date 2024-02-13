@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth/next"
-import { SignIn, SignOut } from "./AuthComponents"
+import { SignIn, SignOut } from "@/components/auth/AuthComponents"
 
 export default async function UserButton() {
     const session = await getServerSession()
@@ -25,11 +25,11 @@ export default async function UserButton() {
                     <a>設定</a>
                 </li>
                 <li>
-                   <SignOut /> 
+                    <SignOut />
                 </li>
             </ul>
         </div>
     ) : (
-       <SignIn /> 
+        <SignIn />
     )
 }
