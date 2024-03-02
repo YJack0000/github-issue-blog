@@ -1,6 +1,6 @@
 "use server"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/api/auth/[...nextauth]/route"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 const GITHUB_GRAPHQL_API = "https://api.github.com/graphql"
 const GITHUB_BLOG_POST_OWNER = process.env.GITHUB_BLOG_POST_OWNER
