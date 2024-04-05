@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react"
 import { useInView } from "react-intersection-observer"
-import { fetchPosts } from "@/lib/github"
+import { fetchPosts } from "@/lib/github/get"
 import PostSmall from "./PostSmall"
 import Loading from "./Loading"
 

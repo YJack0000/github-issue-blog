@@ -1,15 +1,15 @@
 "use client"
 import { useState } from "react"
-import dynamic from "next/dynamic"
-import MDEditor from '@uiw/react-md-editor'
+import MDEditor from "@uiw/react-md-editor"
 import rehypeSanitize from "rehype-sanitize"
-const Select = dynamic(() => import("react-select"), { ssr: false }) // ensure react-select is not server rendered, prevent hydration warning
+import MultiSelect from "@/components/ui/MultiSelect"
 
 export interface PostFormProps {
     header: string
     title?: string
     id?: number
     tags?: string[]
+    description?: string
     body?: string
 }
 
@@ -17,6 +17,7 @@ type PostFormState = {
     id: number | undefined
     title: string | undefined
     tags: string[]
+    description: string | undefined
     body: string | undefined
 }
 
@@ -25,12 +26,14 @@ export default function PostForm({
     title,
     id,
     tags,
+    description,
     body,
 }: PostFormProps) {
     const [form, setForm] = useState<PostFormState>({
         id: id,
         title: title,
         tags: tags || [],
+        description: description || "",
         body: body,
     })
 
@@ -56,7 +59,7 @@ export default function PostForm({
             console.error("Error:", error)
         }
     }
-
+    const defaultTags = form.tags.map((t) => ({ value: t, label: t }))
     return (
         <>
             <div className="">
@@ -87,15 +90,8 @@ export default function PostForm({
                                 updateForm("title", e.target.value)
                             }
                         />
-                        <Select
-                            instanceId={"select-tags"} // some unique id to prevent hydrate warning
-                            isMulti
-                            className="w-full"
-                            defaultValue={() => {
-                                return form.tags.map((t) => {
-                                    return { value: t, label: t }
-                                })
-                            }}
+                        <MultiSelect
+                            defaultValue={defaultTags}
                             options={[
                                 { value: "test", label: "test" },
                                 { value: "tt", label: "tt" },
@@ -106,13 +102,21 @@ export default function PostForm({
                                     selected.map((s: any) => s.value)
                                 )
                             }
-                        ></Select>
+                        ></MultiSelect>
+                        <textarea
+                            placeholder="文章描述"
+                            value={form.description}
+                            className="textarea textarea-bordered w-full"
+                            onChange={(e) =>
+                                updateForm("description", e.target.value)
+                            }
+                        />
                         <MDEditor
                             className="min-h-[40vh]"
                             value={form.body}
                             onChange={(val) => updateForm("body", val)}
                             previewOptions={{
-                                rehypePlugins: [[rehypeSanitize]],
+                                rehypePlugins: [[rehypeSanitize]], // prevent xss
                             }}
                         />
                         <button type="submit" className="btn btn-primary">
