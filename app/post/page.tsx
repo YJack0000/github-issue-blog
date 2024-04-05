@@ -1,6 +1,6 @@
 import PostForm from "@/components/post/PostForm"
 import InfiniteScrollPosts from "@/components/post/InfiniteScrollPosts"
-import { fetchPosts } from "@/lib/github"
+import { fetchPosts } from "@/lib/github/get"
 import AuthProtectedWrapper from "@/components/auth/AuthorProtectedWrapper"
 
 export default async function PostPage() {

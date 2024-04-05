@@ -6,24 +6,6 @@ const GITHUB_GRAPHQL_API = "https://api.github.com/graphql"
 const GITHUB_BLOG_POST_OWNER = process.env.GITHUB_BLOG_POST_OWNER
 const GITHUB_BLOG_POST_REPO = process.env.GITHUB_BLOG_POST_REPO
 
-const _postsMapper = (data: any): Promise<PostPreview[]> => {
-    return data.data.repository.issues.edges.map((edge: any) => {
-        const { title, number, createdAt, labels, author, body } = edge.node
-        return {
-            id: number,
-            title,
-            createdAt,
-            author: {
-                name: author.login,
-                avatar: author.avatarUrl,
-            },
-            description: body,
-            tags: labels.edges.map((edge: any) => edge.node.name),
-            cursor: edge.cursor,
-        }
-    })
-}
-
 export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
     const session = await getServerSession(authOptions)
     const after = cursor ? `after: "${cursor}",` : ""
@@ -78,35 +60,6 @@ export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
     return _postsMapper(data)
 }
 
-const _postDataMapper = (id: string, data: any): Post => {
-    return {
-        id: parseInt(id),
-        author: {
-            name: data.data.repository.issue.author.login,
-            avatar: data.data.repository.issue.author.avatarUrl,
-        },
-        title: data.data.repository.issue.title,
-        createdAt: data.data.repository.issue.createdAt,
-        tags: data.data.repository.issue.labels.edges.map(
-            (edge: any) => edge.node.name
-        ),
-        body: data.data.repository.issue.comments.edges[0].node.body,
-        comments: data.data.repository.issue.comments.edges
-            .slice(1)
-            .map((edge: any) => {
-                const { author, body, createdAt } = edge.node
-                return {
-                    author: {
-                        name: author.login,
-                        avatar: author.avatarUrl,
-                    },
-                    body: body,
-                    createdAt: createdAt,
-                }
-            }),
-    }
-}
-
 export const fetchPostData = async (id: string): Promise<Post> => {
     const session = await getServerSession(authOptions)
     const query = `
@@ -125,6 +78,7 @@ export const fetchPostData = async (id: string): Promise<Post> => {
                     }
                 }
             }
+            body
             comments(first: 20) {
                 edges {
                     node {
@@ -162,33 +116,50 @@ export const fetchPostData = async (id: string): Promise<Post> => {
     return _postDataMapper(id, data)
 }
 
-export const getAuthor = async (): Promise<string> => {
-    const session = await getServerSession(authOptions)
-    const query = `
-      query {
-        repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
-            owner { 
-                login
-            }
+const _postsMapper = (data: any): Promise<PostPreview[]> => {
+    return data.data.repository.issues.edges.map((edge: any) => {
+        const { title, number, createdAt, labels, author, body } = edge.node
+        return {
+            id: number,
+            title,
+            createdAt,
+            author: {
+                name: author.login,
+                avatar: author.avatarUrl,
+            },
+            description: body,
+            tags: labels.edges.map((edge: any) => edge.node.name),
+            cursor: edge.cursor,
         }
-      }`
-    const response = await fetch(GITHUB_GRAPHQL_API, {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            Authorization: `token ${session.accessToken}`,
-        },
-        body: JSON.stringify({ query }),
     })
+}
 
-    if (!response.ok) {
-        throw new Error("Failed to fetch author data")
+const _postDataMapper = (id: string, data: any): Post => {
+    return {
+        id: parseInt(id),
+        author: {
+            name: data.data.repository.issue.author.login,
+            avatar: data.data.repository.issue.author.avatarUrl,
+        },
+        title: data.data.repository.issue.title,
+        createdAt: data.data.repository.issue.createdAt,
+        tags: data.data.repository.issue.labels.edges.map(
+            (edge: any) => edge.node.name
+        ),
+        description: data.data.repository.issue.body,
+        body: data.data.repository.issue.comments.edges[0].node.body,
+        comments: data.data.repository.issue.comments.edges
+            .slice(1)
+            .map((edge: any) => {
+                const { author, body, createdAt } = edge.node
+                return {
+                    author: {
+                        name: author.login,
+                        avatar: author.avatarUrl,
+                    },
+                    body: body,
+                    createdAt: createdAt,
+                }
+            }),
     }
-
-    const data = await response.json()
-    if (data.errors) {
-        throw new Error(data.errors[0].message)
-    }
-
-    return data.data.repository.owner.login
 }
