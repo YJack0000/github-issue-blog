@@ -19,6 +19,7 @@ type Post = {
     createdAt: string
     tags: string[]
     author: Author
+    description: string
     body: string
     comments: string[]
 }
