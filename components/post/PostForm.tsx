@@ -1,6 +1,8 @@
 "use client"
 import { useState } from "react"
 import dynamic from "next/dynamic"
+import MDEditor from '@uiw/react-md-editor'
+import rehypeSanitize from "rehype-sanitize"
 const Select = dynamic(() => import("react-select"), { ssr: false }) // ensure react-select is not server rendered, prevent hydration warning
 
 export interface PostFormProps {
@@ -105,11 +107,13 @@ export default function PostForm({
                                 )
                             }
                         ></Select>
-                        <textarea
-                            placeholder="文章內容"
-                            className="textarea textarea-bordered w-full h-96"
+                        <MDEditor
+                            className="min-h-[40vh]"
                             value={form.body}
-                            onChange={(e) => updateForm("body", e.target.value)}
+                            onChange={(val) => updateForm("body", val)}
+                            previewOptions={{
+                                rehypePlugins: [[rehypeSanitize]],
+                            }}
                         />
                         <button type="submit" className="btn btn-primary">
                             送出
