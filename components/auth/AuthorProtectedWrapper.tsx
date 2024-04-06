@@ -1,6 +1,4 @@
-import { getServerSession } from "next-auth"
-
-const GITHUB_BLOG_POST_OWNER = process.env.GITHUB_BLOG_POST_OWNER
+import { getAuthor, getUserName } from "@/actions/github/utils"
 
 export interface AuthProtectedWrapperProps {
     children: React.ReactNode
@@ -11,8 +9,7 @@ export default async function AuthProtectedWrapper({
     children,
     holder,
 }: AuthProtectedWrapperProps) {
-    const session = await getServerSession()
-    return session && session?.user?.name === GITHUB_BLOG_POST_OWNER ? (
+    return (await getUserName()) === (await getAuthor()) ? (
         <>{children}</>
     ) : (
         <>{holder}</>
