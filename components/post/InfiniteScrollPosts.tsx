@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react"
 import { useInView } from "react-intersection-observer"
-import { fetchPosts } from "@/lib/github/get"
+import { fetchPosts } from "@/actions/github/get"
 import PostSmall from "./PostSmall"
 import Loading from "./Loading"
 
@@ -35,7 +35,7 @@ export default function InfiniteScrollPost({
                 setCursor(null)
             } else {
                 setPosts([...posts, ...newPosts])
-                setCursor(posts[posts.length - 1].cursor)
+                setCursor(newPosts[posts.length - 1].cursor)
             }
         } catch (e: any) {
             console.log("Error:", e)
@@ -53,7 +53,6 @@ export default function InfiniteScrollPost({
             {posts.map((post: PostPreview) => (
                 <PostSmall key={post.id} post={post} />
             ))}
-            {cursor}
             {!cursor ? <div /> : <Loading ref={ref} />}
         </>
     )
