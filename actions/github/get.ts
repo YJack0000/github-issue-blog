@@ -1,62 +1,30 @@
 "use server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { getClient } from "@/lib/apollo"
+import { GET_POST_DATA, GET_POSTS } from "./graphql"
 
-const GITHUB_GRAPHQL_API = "https://api.github.com/graphql"
-const GITHUB_BLOG_POST_OWNER = process.env.GITHUB_BLOG_POST_OWNER
-const GITHUB_BLOG_POST_REPO = process.env.GITHUB_BLOG_POST_REPO
 const GITHUB_PAT = process.env.GITHUB_PAT
+
+const client = getClient()
 
 export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
     const session = await getServerSession(authOptions)
-    const after = cursor ? `after: "${cursor}",` : ""
-    const query = `
-      query {
-        repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
-          issues(${after} first: 5, states: [OPEN], orderBy: {field: CREATED_AT, direction: DESC}) {
-            edges {
-              node {
-                id
-                title
-                author {
-                    login
-                    avatarUrl(size: 100)
-                }
-                createdAt
-                labels (first: 5) {
-                  edges {
-                    node {
-                      name
-                    }
-                  }
-                }
-                body
-              }
-              cursor
-            }
-          }
-        }
-      }
-    `
-
-    const response = await fetch(GITHUB_GRAPHQL_API, {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            Authorization: `bearer ${session?.accessToken ?? GITHUB_PAT}`,
+    const { data, errors } = await client.query({
+        query: GET_POSTS,
+        variables: {
+            after: cursor,
         },
-        body: JSON.stringify({ query }),
+        context: {
+            headers: {
+                Authorization: `bearer ${session?.accessToken ?? GITHUB_PAT}`,
+            },
+        },
     })
 
-    if (!response.ok) {
-        throw new Error("Failed to fetch post data")
-    }
-
-    const data = await response.json()
-
-    if (data.errors) {
-        console.log(data.errors[0].message)
-        throw new Error(data.errors[0].message)
+    if (errors) {
+        console.error("GraphQL errors:", errors)
+        throw new Error(errors.map((error) => error.message).join(", "))
     }
 
     return _postsMapper(data)
@@ -64,63 +32,26 @@ export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
 
 export const fetchPostData = async (id: string): Promise<Post> => {
     const session = await getServerSession(authOptions)
-    const query = `
-        query {
-          node(id: "${id}") {
-            ... on Issue {
-              title
-              author {
-                login
-                avatarUrl(size: 100)
-              }
-              labels(first: 5) {
-                edges {
-                  node {
-                    name
-                  }
-                }
-              }
-              body
-              comments(first: 20) {
-                edges {
-                  node {
-                    author {
-                      login
-                      avatarUrl(size: 100)
-                    }
-                    body
-                    createdAt
-                  }
-                }
-              }
-            }
-          }
-        }
-        `
-    const response = await fetch(GITHUB_GRAPHQL_API, {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            Authorization: `bearer ${session?.accessToken ?? GITHUB_PAT}`,
+
+    const { data, errors } = await client.query({
+        query: GET_POST_DATA,
+        variables: { id },
+        context: {
+            headers: {
+                Authorization: `bearer ${session?.accessToken ?? GITHUB_PAT}`,
+            },
         },
-        body: JSON.stringify({ query }),
     })
 
-    if (!response.ok) {
-        throw new Error("Failed to fetch post data")
+    if (errors) {
+        console.error("GraphQL errors:", errors)
+        throw new Error(errors.map((error) => error.message).join(", "))
     }
 
-    const data = await response.json()
-
-    if (data.errors) {
-        throw new Error(JSON.stringify(data))
-    }
-
-    return _postDataMapper(id, data.data)
+    return _postDataMapper(id, data)
 }
-
 const _postsMapper = (data: any): Promise<PostPreview[]> => {
-    return data.data.repository.issues.edges.map((edge: any) => {
+    return data.repository.issues.edges.map((edge: any) => {
         const { id, title, createdAt, labels, author, body } = edge.node
         return {
             id: id,

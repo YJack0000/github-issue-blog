@@ -11,10 +11,10 @@ export default function DeleteButton({
 }) {
     return (
         <button
-            className={cn("btn btn-error", className)}
+            className={cn("btn btn-error btn-outline", className)}
             onClick={() => onClick()}
         >
-            Delete
+            ❌ &nbsp; 刪除文章
         </button>
     )
 }

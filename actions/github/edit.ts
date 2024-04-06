@@ -2,12 +2,15 @@
 
 import {
     addCommentToIssue,
+    closeIssue,
     createIssue,
-    deleteIssue,
     getAuthor,
+    getFirstCommentId,
     getLabelIds,
     getRepositoryId,
     getUserName,
+    updateComment,
+    updateIssue,
     updateLabelsToIssue,
 } from "@/actions/github/utils"
 
@@ -30,9 +33,7 @@ export async function createPost({
     tags,
 }: CreatePostRequest): Promise<CreatePostResponse> {
     if ((await getUserName()) !== (await getAuthor())) {
-        throw new Error(
-            JSON.stringify({ status: "Unauthorized", message: "Unauthorized" })
-        )
+        return { status: "Unauthorized", message: "Unauthorized" }
     }
 
     const repositoryId = await getRepositoryId()
@@ -64,16 +65,17 @@ export async function updatePost({
     tags,
 }: UpdatePostRequest): Promise<UpdatePostResponse> {
     if ((await getUserName()) !== (await getAuthor())) {
-        throw new Error(
-            JSON.stringify({ status: "Unauthorized", message: "Unauthorized" })
-        )
+        return { status: "Unauthorized", message: "Unauthorized" }
     }
 
     const issueId = id
+    console.log("getLabelIds")
     const labelIds = await getLabelIds(tags)
-    await updateLabelsToIssue(issueId, labelIds)
-    await updateIssue(issueId, title, body)
-    await updateFirstCommentOfIssue(issueId, description)
+    console.log("updateIssue")
+    await updateIssue(issueId, labelIds, title, description)
+    console.log("getFirstCommentId")
+    const firstCommentId = await getFirstCommentId(issueId)
+    await updateComment(firstCommentId, body)
 
     return { status: "Success", message: "Post updated successfully" }
 }
@@ -91,11 +93,9 @@ export async function deletePost({
     id,
 }: DeletePostRequest): Promise<DeletePostResponse> {
     if ((await getUserName()) !== (await getAuthor())) {
-        throw new Error(
-            JSON.stringify({ status: "Unauthorized", message: "Unauthorized" })
-        )
+        return { status: "Unauthorized", message: "Unauthorized" }
     }
 
-    await deleteIssue(id)
+    await closeIssue(id)
     return { status: "Success", message: `Delete of post-${id} success! ` }
 }

@@ -3,17 +3,18 @@ import Markdown from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism"
-import { useRouter } from "next/navigation"
 import { permanentRedirect } from "next/navigation"
 import { fetchPostData } from "@/actions/github/get"
 import PostForm from "@/components/post/PostForm"
 import AuthProtectedWrapper from "@/components/auth/AuthorProtectedWrapper"
-import DeleteButton from "@/components/ui/DeleteButton"
 import {
     deletePost,
     DeletePostRequest,
     DeletePostResponse,
+    updatePost,
+    UpdatePostRequest,
 } from "@/actions/github/edit"
+import DeletePost from "@/components/post/DeletePost"
 
 const CodeBlock = ({ language, value }: any) => (
     <SyntaxHighlighter language={language} style={dark}>
@@ -28,6 +29,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
         const res: DeletePostResponse = await deletePost(req)
 
         if (res.status === "Success") permanentRedirect("/post")
+    }
+
+    const handleEditPost = async (formData: any) => {
+        "use server"
+        const req: UpdatePostRequest = {
+            id: params.slug,
+            title: formData.title,
+            description: formData.description,
+            body: formData.body,
+            tags: formData.tags,
+        }
+        const res = await updatePost(req)
+        if (res.status === "Success") permanentRedirect(`/post/${params.slug}`)
     }
 
     const post = await fetchPostData(params.slug)
@@ -69,14 +83,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
                         <div>Sun Apr 30 2023</div>
                         <AuthProtectedWrapper holder={null}>
                             <PostForm
-                                header="編輯文章"
-                                id={post.id}
-                                title={post.title}
-                                tags={post.tags}
-                                description={post.description}
-                                body={post.body}
+                                header="📝 編輯文章"
+                                formData={{ ...post }}
+                                formAction={handleEditPost}
                             />
-                            <DeleteButton onClick={handleDeletePost} />
+                            <DeletePost onClick={handleDeletePost} />
                         </AuthProtectedWrapper>
                     </div>
                     <Markdown

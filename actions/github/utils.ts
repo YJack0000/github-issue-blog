@@ -2,6 +2,11 @@
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
+import { getClient } from "@/lib/apollo"
+import { GET_FIRST_COMMENT_ID, UPDATE_COMMENT, UPDATE_ISSUE } from "./graphql"
+
+const client = getClient()
+
 const GITHUB_GRAPHQL_API = "https://api.github.com/graphql"
 const GITHUB_BLOG_POST_OWNER = process.env.GITHUB_BLOG_POST_OWNER
 const GITHUB_BLOG_POST_REPO = process.env.GITHUB_BLOG_POST_REPO
@@ -226,11 +231,11 @@ export const addCommentToIssue = async (issueId: string, body: string) => {
     })
 }
 
-export const deleteIssue = async (issueId: string) => {
+export const closeIssue = async (issueId: string) => {
     const session = await getServerSession(authOptions)
     const query = `
-    mutation DeleteIssue($issueId: ID!) {
-        deleteIssue(input: { issueId: $issueId }) {
+    mutation CloseIssue($issueId: ID!) {
+        closeIssue(input: { issueId: $issueId }) {
         clientMutationId
         }
     }
@@ -257,6 +262,82 @@ export const deleteIssue = async (issueId: string) => {
         }
     } catch (error) {
         console.error("An error occurred:", error)
+        throw error
+    }
+}
+
+export const updateIssue = async (
+    issueId: string,
+    labelIds: string[],
+    title: string,
+    description: string
+) => {
+    const session = await getServerSession(authOptions)
+
+    try {
+        const { errors } = await client.mutate({
+            mutation: UPDATE_ISSUE,
+            variables: { issueId, labelIds, title, description },
+            context: {
+                headers: {
+                    Authorization: `bearer ${session?.accessToken}`,
+                },
+            },
+        })
+        if (errors) {
+            console.error("GraphQL errors:", errors)
+            throw new Error(errors.map((error) => error.message).join(", "))
+        }
+    } catch (error) {
+        console.error("An error occurred when updateIssue info")
+        throw error
+    }
+}
+
+export const getFirstCommentId = async (issueId: string): Promise<string> => {
+    const session = await getServerSession(authOptions)
+
+    try {
+        const { data, errors } = await client.query({
+            query: GET_FIRST_COMMENT_ID,
+            variables: { issueId },
+            context: {
+                headers: {
+                    Authorization: `bearer ${session?.accessToken}`,
+                },
+            },
+        })
+        if (errors) {
+            console.error("GraphQL errors:", errors)
+            throw new Error(errors.map((error) => error.message).join(", "))
+        }
+
+        return data.node.comments.edges[0].node.id
+    } catch (error) {
+        console.error("An error occurred when getFirstCommentId info")
+        throw error
+    }
+}
+
+export const updateComment = async (commentId: string, body: string) => {
+    const session = await getServerSession(authOptions)
+
+    try {
+        const { errors } = await client.mutate({
+            mutation: UPDATE_COMMENT,
+            variables: { commentId, body },
+            context: {
+                headers: {
+                    Authorization: `bearer ${session?.accessToken}`,
+                },
+            },
+        })
+        if (errors) {
+            console.error("GraphQL errors:", errors)
+            throw new Error(errors.map((error) => error.message).join(", "))
+        }
+    } catch (error) {
+        console.error("An error occurred when updateComment info")
         throw error
     }
 }

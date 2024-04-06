@@ -57,9 +57,9 @@ export default function PostForm({
         } catch (e: any) {
             setErrorMessage(e.message)
             setTimeout(() => {
-                // hide error message after 3 seconds
+                // hide error message after 5 seconds
                 setErrorMessage(undefined)
-            }, 3000)
+            }, 5000)
         }
     }
 
@@ -68,7 +68,7 @@ export default function PostForm({
         <>
             <div className="">
                 <button
-                    className="btn btn-primary w-full"
+                    className="btn btn-primary w-100"
                     onClick={() =>
                         (
                             document.getElementById("post_form") as any
