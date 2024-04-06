@@ -22,12 +22,10 @@ export default function InfiniteScrollPost({
     })
 
     const fetchMore = useCallback(async () => {
-        console.log("fetchMore", posts.length, cursor)
         if (!cursor) return
 
         try {
             const newPosts = await fetchPosts(cursor)
-            console.log("newPosts", newPosts)
             if (
                 newPosts.length == 0 ||
                 newPosts[newPosts.length - 1].id === posts[posts.length - 1].id

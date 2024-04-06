@@ -14,7 +14,7 @@ type PostPreview = {
 }
 
 type Post = {
-    id: number
+    id: string
     title: string
     createdAt: string
     tags: string[]
