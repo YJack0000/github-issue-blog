@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import MDEditor from "@uiw/react-md-editor"
-import rehypeSanitize from "rehype-sanitize"
+import MarkdownEditor from "@/components/post/MarkdownEditor"
 import MultiSelect from "@/components/ui/MultiSelect"
 import ErrorAlert from "@/components/ui/ErrorAlert"
 
@@ -42,6 +41,8 @@ export default function PostForm({
         undefined
     )
 
+    const [loading, setLoading] = useState<boolean>(false)
+
     const updateForm = (name: string, value: string | string[]) => {
         setForm((prevState: any) => ({
             ...prevState,
@@ -51,15 +52,20 @@ export default function PostForm({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("handleSubmit", form)
+        setLoading(true)
         try {
-            if (formAction) await formAction(form)
+            if (formAction) {
+                await formAction(form)
+            }
+            ; (document.getElementById("post_form") as any).close()
         } catch (e: any) {
             setErrorMessage(e.message)
             setTimeout(() => {
                 // hide error message after 5 seconds
                 setErrorMessage(undefined)
             }, 5000)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -95,6 +101,7 @@ export default function PostForm({
                             onChange={(e) =>
                                 updateForm("title", e.target.value)
                             }
+                            disabled={loading}
                         />
                         <MultiSelect
                             defaultValue={defaultTags}
@@ -108,6 +115,7 @@ export default function PostForm({
                                     selected.map((s: any) => s.value)
                                 )
                             }
+                            disabled={loading}
                         ></MultiSelect>
                         <textarea
                             placeholder="文章描述"
@@ -116,17 +124,25 @@ export default function PostForm({
                             onChange={(e) =>
                                 updateForm("description", e.target.value)
                             }
+                            disabled={loading}
                         />
-                        <MDEditor
+                        <MarkdownEditor
                             className="min-h-[40vh]"
                             value={form.body}
-                            onChange={(val: any) => updateForm("body", val)}
-                            previewOptions={{
-                                rehypePlugins: [[rehypeSanitize]], // prevent xss
-                            }}
+                            onChange={(val: string | undefined) =>
+                                updateForm("body", val ?? "")
+                            }
                         />
-                        <button type="submit" className="btn btn-primary">
-                            送出
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
+                            disabled={loading}
+                        >
+                            {!loading ? (
+                                "送出"
+                            ) : (
+                                <span className="loading loading-spinner loading-md"></span>
+                            )}
                         </button>
                     </form>
                 </div>

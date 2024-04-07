@@ -1,9 +1,12 @@
 "use server"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-
+import { authOptions } from "@/config/auth"
 import { getClient } from "@/lib/apollo"
-import { GET_FIRST_COMMENT_ID, UPDATE_COMMENT, UPDATE_ISSUE } from "./graphql"
+import {
+    GET_FIRST_COMMENT_ID,
+    UPDATE_COMMENT,
+    UPDATE_ISSUE,
+} from "@/graphql/github"
 
 const client = getClient()
 

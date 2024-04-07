@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import Header from "@/components/Header"
 import "./globals.css"
 import Footer from "@/components/Footer"
+import NextTopLoader from "nextjs-toploader"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
+                <NextTopLoader showSpinner={false} />
                 <Header title={BLOG_NAME} />
                 <div className="min-h-screen max-w-6xl mx-auto flex flex-col">
                     {children}

@@ -1,4 +1,4 @@
-import { getAuthor, getUserName } from "@/actions/github/utils"
+import { getAuthor, getUserName } from "@/actions/github"
 
 export interface AuthProtectedWrapperProps {
     children: React.ReactNode

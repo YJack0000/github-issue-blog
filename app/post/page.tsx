@@ -1,14 +1,24 @@
+import { Suspense } from "react"
 import PostForm, { PostFormState } from "@/components/post/PostForm"
 import InfiniteScrollPosts from "@/components/post/InfiniteScrollPosts"
 import AuthProtectedWrapper from "@/components/auth/AuthorProtectedWrapper"
-import { fetchPosts } from "@/actions/github/get"
+import { fetchPosts } from "@/actions/post"
 import {
     createPost,
     CreatePostRequest,
     CreatePostResponse,
-} from "@/actions/github/edit"
+} from "@/actions/edit-post"
+import { getTags } from "@/actions/tag"
+import Breadcrumbs from "@/components/ui/Breadcrumbs"
+import TagBox from "@/components/post/TagBox"
 
-export default async function PostPage() {
+export default async function PostPage({
+    searchParams,
+}: {
+    searchParams: { tag?: string }
+}) {
+    const selectedTag = searchParams?.tag || undefined
+
     const handleCreatePost = async (formData: PostFormState) => {
         "use server"
         const req: CreatePostRequest = {
@@ -23,22 +33,29 @@ export default async function PostPage() {
     }
 
     try {
-        const posts = await fetchPosts()
+        const posts = await fetchPosts({
+            tags: selectedTag ? [selectedTag] : undefined,
+        })
+        const tags = await getTags()
+
         return (
             <>
-                <div className="mx-0 max-w-full flex-1 p-4 xl:p-0">
-                    <div className="block md:flex md:flex-row-reverse md:gap-2 mb-4">
+                <Breadcrumbs />
+                <div className="block md:flex md:flex-row-reverse md:gap-2 mb-4">
+                    <aside className="w-full md:w-1/4">
                         <AuthProtectedWrapper holder={null}>
-                            <aside className="w-full md:w-1/4">
-                                <PostForm
-                                    header="新增文章"
-                                    formAction={handleCreatePost}
-                                />
-                            </aside>
+                            <PostForm
+                                header="新增文章"
+                                formAction={handleCreatePost}
+                            />
                         </AuthProtectedWrapper>
-                        <div className="flex-1">
-                            <InfiniteScrollPosts initPosts={posts} />
-                        </div>
+                        <TagBox tags={tags} selected={selectedTag} />
+                    </aside>
+                    <div className="flex-1">
+                            <InfiniteScrollPosts
+                                initPosts={posts}
+                                selectedTag={selectedTag}
+                            />
                     </div>
                 </div>
             </>

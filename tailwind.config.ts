@@ -20,9 +20,7 @@ const config: Config = {
             {
                 business: {
                     // eslint-disable-next-line @typescript-eslint/no-var-requires
-                    ...require("daisyui/src/theming/themes")[
-                        "[data-theme=business]"
-                    ],
+                    ...require("daisyui/src/theming/themes")["business"],
                     "base-100": "#10151a",
                 },
             },

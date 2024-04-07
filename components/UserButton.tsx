@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth/next"
+import Image from "next/image"
 import { SignIn, SignOut } from "@/components/auth/AuthComponents"
 
 export default async function UserButton() {
@@ -11,8 +12,10 @@ export default async function UserButton() {
                 className="btn btn-ghost btn-circle avatar"
             >
                 <div className="w-10 rounded-full">
-                    <img
+                    <Image
                         alt="Avatar image"
+                        width={40}
+                        height={40}
                         src={session?.user?.image as string}
                     />
                 </div>

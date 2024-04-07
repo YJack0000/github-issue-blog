@@ -12,7 +12,7 @@ import {
     updateComment,
     updateIssue,
     updateLabelsToIssue,
-} from "@/actions/github/utils"
+} from "@/actions/github"
 
 export type CreatePostRequest = {
     title: string

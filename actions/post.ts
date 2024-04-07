@@ -1,19 +1,26 @@
 "use server"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/config/auth"
 import { getClient } from "@/lib/apollo"
-import { GET_POST_DATA, GET_POSTS } from "./graphql"
+import { GET_POST_DATA, GET_POSTS } from "@/graphql/github"
 
 const GITHUB_PAT = process.env.GITHUB_PAT
 
 const client = getClient()
 
-export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
+export const fetchPosts = async ({
+    cursor,
+    tags,
+}: {
+    cursor?: string
+    tags?: string[]
+}): Promise<PostPreview[]> => {
     const session = await getServerSession(authOptions)
     const { data, errors } = await client.query({
         query: GET_POSTS,
         variables: {
             after: cursor,
+            labels: tags,
         },
         context: {
             headers: {
@@ -27,7 +34,7 @@ export const fetchPosts = async (cursor?: string): Promise<PostPreview[]> => {
         throw new Error(errors.map((error) => error.message).join(", "))
     }
 
-    return _postsMapper(data)
+    return postsMapper(data)
 }
 
 export const fetchPostData = async (id: string): Promise<Post> => {
@@ -48,9 +55,10 @@ export const fetchPostData = async (id: string): Promise<Post> => {
         throw new Error(errors.map((error) => error.message).join(", "))
     }
 
-    return _postDataMapper(id, data)
+    return postDataMapper(id, data)
 }
-const _postsMapper = (data: any): Promise<PostPreview[]> => {
+
+const postsMapper = (data: any): Promise<PostPreview[]> => {
     return data.repository.issues.edges.map((edge: any) => {
         const { id, title, createdAt, labels, author, body } = edge.node
         return {
@@ -68,7 +76,7 @@ const _postsMapper = (data: any): Promise<PostPreview[]> => {
     })
 }
 
-const _postDataMapper = (id: string, data: any): Post => {
+const postDataMapper = (id: string, data: any): Post => {
     return {
         id: id,
         author: {

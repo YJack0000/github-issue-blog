@@ -4,9 +4,9 @@ const GITHUB_BLOG_POST_OWNER = process.env.GITHUB_BLOG_POST_OWNER
 const GITHUB_BLOG_POST_REPO = process.env.GITHUB_BLOG_POST_REPO
 
 export const GET_POSTS = gql`
-       query GetPosts($after: String) {
+    query GetPosts($after: String, $labels: [String!]) {
         repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
-          issues(after: $after,, first: 5, states: [OPEN], orderBy: {field: CREATED_AT, direction: DESC}) {
+          issues(after: $after, first: 5, filterBy: {states: [OPEN], labels: $labels}, orderBy: {field: CREATED_AT, direction: DESC}) {
             edges {
               node {
                 id
@@ -30,6 +30,30 @@ export const GET_POSTS = gql`
           }
         }
       }
+    `
+
+export const GET_TAGS = gql`
+    query GetTags {
+        repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
+            labels(first: 20) {
+                edges {
+                    node {
+                        name
+                    }
+                }
+            }
+        }
+    }
+    `
+
+export const CREATE_TAG = gql`
+    mutation CreateTag($name: String!) {
+        createLabel(input: {repositoryId: "${GITHUB_BLOG_POST_REPO}", name: $name, color: "000000"}) {
+            label {
+                clientMutationId
+            }
+        }
+    }
     `
 
 export const GET_POST_DATA = gql`
@@ -115,3 +139,4 @@ export const UPDATE_COMMENT = gql`
         }
     }
 `
+
