@@ -14,6 +14,7 @@ import {
 import DeletePost from "@/components/post/DeletePost"
 import Breadcrumbs from "@/components/ui/Breadcrumbs"
 import PostRenderer from "@/components/post/PostRenderer"
+import Comments from "@/components/post/Comments"
 
 export default async function Page({ params }: { params: { slug: string } }) {
     const handleDeletePost = async () => {
@@ -103,6 +104,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
                         </AuthProtectedWrapper>
                     </div>
                     <PostRenderer content={post.body} />
+                    <div className="mt-4"></div>
+                    <Comments comments={post.comments} />
                 </div>
             </section>
         </>

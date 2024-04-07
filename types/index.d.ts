@@ -21,7 +21,7 @@ type Post = {
     author: Author
     description: string
     body: string
-    comments: string[]
+    comments: Comment[]
 }
 
 type Comment = {
