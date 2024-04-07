@@ -39,7 +39,9 @@ export async function createPost({
     const repositoryId = await getRepositoryId()
     const issueId = await createIssue(repositoryId, title, description)
     const labelIds = await getLabelIds(tags)
+    console.log("updateLabelsToIssue")
     await updateLabelsToIssue(issueId, labelIds)
+    console.log("addCommentToIssue")
     await addCommentToIssue(issueId, body)
     return { status: "Success", message: "Post created successfully" }
 }

@@ -196,8 +196,6 @@ export const updateLabelsToIssue = async (
 
         const responseData = await response.json()
 
-        console.log("responseData:", JSON.stringify(responseData))
-
         if (responseData.errors) {
             console.error("Failed to add labels to issue:", responseData.errors)
             throw new Error("Failed to add labels to issue.")
@@ -209,6 +207,7 @@ export const updateLabelsToIssue = async (
 }
 
 export const addCommentToIssue = async (issueId: string, body: string) => {
+    const session = await getServerSession(authOptions)
     const query = `
     mutation AddComment($issueId: ID!, $body: String!) {
         addComment(input: { subjectId: $issueId, body: $body }) {
@@ -221,17 +220,32 @@ export const addCommentToIssue = async (issueId: string, body: string) => {
     }
         `
 
-    await fetch(GITHUB_GRAPHQL_API, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer YOUR_GITHUB_TOKEN`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            query,
-            variables: { issueId, body },
-        }),
-    })
+    try {
+        const response = await fetch(GITHUB_GRAPHQL_API, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${session.accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                query,
+                variables: { issueId, body },
+            }),
+        })
+
+        const responseData = await response.json()
+
+        if (responseData.errors) {
+            console.error(
+                "Failed to add comment to issue:",
+                responseData.errors
+            )
+            throw new Error("Failed to add comment to issue.")
+        }
+    } catch (error) {
+        console.error("An error occurred:", error)
+        throw error
+    }
 }
 
 export const closeIssue = async (issueId: string) => {
