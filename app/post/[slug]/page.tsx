@@ -9,7 +9,7 @@ import {
     DeletePostResponse,
     updatePost,
     UpdatePostRequest,
-    UpdatePostResponse
+    UpdatePostResponse,
 } from "@/actions/edit-post"
 import DeletePost from "@/components/post/DeletePost"
 import Breadcrumbs from "@/components/ui/Breadcrumbs"

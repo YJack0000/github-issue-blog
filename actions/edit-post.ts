@@ -94,7 +94,7 @@ export async function updatePost({
         return { status: "Unauthorized", message: "Unauthorized" }
     }
 
-     const validationError = validatePost(title, body)
+    const validationError = validatePost(title, body)
     if (validationError)
         return {
             status: "Failed",

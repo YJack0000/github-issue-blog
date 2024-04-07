@@ -29,13 +29,15 @@ export default async function PostPage({
         }
 
         let res: CreatePostResponse
-        try { // for catch unexpected server error
+        try {
+            // for catch unexpected server error
             res = await createPost(req)
         } catch (e: any) {
             throw new Error("內部出現錯誤")
         }
 
-        if (res.status !== "Success") { // for catch expected error
+        if (res.status !== "Success") {
+            // for catch expected error
             throw new Error(`${res.status}: ${res.message}`)
         }
 

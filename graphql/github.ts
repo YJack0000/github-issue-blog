@@ -32,6 +32,20 @@ export const GET_POSTS = gql`
       }
     `
 
+export const GET_ALL_POSTS_ID = gql`
+    query GetAllPostsId {
+        repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
+            issues(first: 100, filterBy: {states: [OPEN]}) {
+                edges {
+                    node {
+                        id
+                    }
+                }
+            }
+        }
+    }
+`
+
 export const GET_TAGS = gql`
     query GetTags {
         repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
@@ -139,4 +153,3 @@ export const UPDATE_COMMENT = gql`
         }
     }
 `
-
