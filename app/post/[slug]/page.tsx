@@ -56,7 +56,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                         {post.title}
                     </h1>
                 </div>
-                <div className="mx-auto max-w-4xl">
+                <div className="w-full mx-auto">
                     <div className="mb-6 flex items-center gap-2 text-sm">
                         <div className="flex items-center gap-2">
                             <div className="avatar">
