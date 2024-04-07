@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import NextTopLoader from "nextjs-toploader"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 import Header from "@/components/Header"
 import "./globals.css"
 import Footer from "@/components/Footer"
@@ -26,6 +27,7 @@ export default function RootLayout({
         <html lang="en">
             <body className={inter.className}>
                 <SpeedInsights />
+                <Analytics />
                 <NextTopLoader showSpinner={false} />
                 <Header title={BLOG_NAME} />
                 <div className="min-h-screen max-w-6xl mx-auto flex flex-col">
