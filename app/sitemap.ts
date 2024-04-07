@@ -11,8 +11,8 @@ async function getAllPostIds() {
         context: {
             headers: {
                 Authorization: `Bearer ${process.env.GITHUB_PAT}`,
-            }
-        }
+            },
+        },
     })
     const totalPosts = data.repository.issues.edges.length
     const sitemapIds = Array.from(

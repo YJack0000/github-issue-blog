@@ -44,31 +44,31 @@ export default async function PostPage({
         redirect(`/post/${res.postId}`)
     }
 
-        const posts = await fetchPosts({
-            tags: selectedTag ? [selectedTag] : undefined,
-        })
-        const tags = await getTags()
+    const posts = await fetchPosts({
+        tags: selectedTag ? [selectedTag] : undefined,
+    })
+    const tags = await getTags()
 
-        return (
-            <>
-                <Breadcrumbs />
-                <div className="block md:flex md:flex-row-reverse md:gap-2 mb-4">
-                    <aside className="w-full md:w-1/4">
-                        <AuthProtectedWrapper holder={null}>
-                            <PostForm
-                                header="新增文章"
-                                formAction={handleCreatePost}
-                            />
-                        </AuthProtectedWrapper>
-                        <TagBox tags={tags} selected={selectedTag} />
-                    </aside>
-                    <div className="flex-1">
-                        <InfiniteScrollPosts
-                            initPosts={posts}
-                            selectedTag={selectedTag}
+    return (
+        <>
+            <Breadcrumbs />
+            <div className="block md:flex md:flex-row-reverse md:gap-2 mb-4">
+                <aside className="w-full md:w-1/4">
+                    <AuthProtectedWrapper holder={null}>
+                        <PostForm
+                            header="新增文章"
+                            formAction={handleCreatePost}
                         />
-                    </div>
+                    </AuthProtectedWrapper>
+                    <TagBox tags={tags} selected={selectedTag} />
+                </aside>
+                <div className="flex-1">
+                    <InfiniteScrollPosts
+                        initPosts={posts}
+                        selectedTag={selectedTag}
+                    />
                 </div>
-            </>
-        )
+            </div>
+        </>
+    )
 }

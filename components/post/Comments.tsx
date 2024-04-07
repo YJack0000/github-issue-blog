@@ -36,14 +36,6 @@ function Comment({
     )
 }
 
-type Comment = {
-    author: {
-        avatar: string
-        name: string
-    }
-    body: string
-    createdAt: string
-}
 
 export default function Comments({ comments }: { comments: Comment[] }) {
     console.log(comments)
