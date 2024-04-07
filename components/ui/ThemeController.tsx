@@ -1,5 +1,5 @@
 export default function ThemeController() {
-    return(
+    return (
         <label className="swap swap-rotate">
             {/* this hidden checkbox controls the state */}
             <input

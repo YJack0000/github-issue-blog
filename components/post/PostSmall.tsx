@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 
 interface PostSmallProps {
@@ -15,7 +16,12 @@ export default function PostSmall({ post }: PostSmallProps) {
                 <div className="flex items-center gap-2">
                     <div className="avatar">
                         <div className="w-6 rounded">
-                            <img src={post.author.avatar} alt="author avatar" />
+                            <Image
+                                src={post.author.avatar}
+                                alt="author avatar"
+                                width={24}
+                                height={24}
+                            />
                         </div>
                     </div>{" "}
                     {post.author.name}

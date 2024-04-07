@@ -1,4 +1,3 @@
-import { Suspense } from "react"
 import PostForm, { PostFormState } from "@/components/post/PostForm"
 import InfiniteScrollPosts from "@/components/post/InfiniteScrollPosts"
 import AuthProtectedWrapper from "@/components/auth/AuthorProtectedWrapper"
@@ -52,10 +51,10 @@ export default async function PostPage({
                         <TagBox tags={tags} selected={selectedTag} />
                     </aside>
                     <div className="flex-1">
-                            <InfiniteScrollPosts
-                                initPosts={posts}
-                                selectedTag={selectedTag}
-                            />
+                        <InfiniteScrollPosts
+                            initPosts={posts}
+                            selectedTag={selectedTag}
+                        />
                     </div>
                 </div>
             </>
