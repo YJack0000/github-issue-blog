@@ -13,6 +13,15 @@ type PostPreview = {
     cursor: string
 }
 
+type PostComment = {
+    author: {
+        avatar: string
+        name: string
+    }
+    body: string
+    createdAt: string
+}
+
 type Post = {
     id: string
     title: string
@@ -21,14 +30,6 @@ type Post = {
     author: Author
     description: string
     body: string
-    comments: Comment[]
+    comments: PostComment[]
 }
 
-type Comment = {
-    author: {
-        avatar: string
-        name: string
-    }
-    body: string
-    createdAt: string
-}

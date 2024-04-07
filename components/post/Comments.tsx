@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 
-function Comment({
+function CommentChild({
     avatarUrl,
     name,
     body,
@@ -36,8 +36,7 @@ function Comment({
     )
 }
 
-
-export default function Comments({ comments }: { comments: Comment[] }) {
+export default function Comments({ comments }: { comments: PostComment[] }) {
     console.log(comments)
     return (
         <>
@@ -45,8 +44,8 @@ export default function Comments({ comments }: { comments: Comment[] }) {
                 <h1 className="text-xl p-4"> 留言區 </h1>
                 <div className="divider m-0"></div>
                 <div className="p-4">
-                    {comments.map((comment: Comment) => (
-                        <Comment
+                    {comments.map((comment: PostComment) => (
+                        <CommentChild
                             key={comment.createdAt}
                             avatarUrl={comment.author.avatar}
                             name={comment.author.name}
