@@ -25,7 +25,10 @@ type Post = {
 }
 
 type Comment = {
-    author: Author
+    author: {
+        avatar: string
+        name: string
+    }
     body: string
     createdAt: string
 }

@@ -12,7 +12,7 @@ export const getTags = async (): Promise<string[]> => {
         query: GET_TAGS,
         context: {
             headers: {
-                Authorization: `bearer ${session?.accessToken}`,
+                Authorization: `bearer ${session?.accessToken ?? process.env.GITHUB_PAT}`,
             },
         },
     })

@@ -44,7 +44,6 @@ export default async function PostPage({
         redirect(`/post/${res.postId}`)
     }
 
-    try {
         const posts = await fetchPosts({
             tags: selectedTag ? [selectedTag] : undefined,
         })
@@ -72,7 +71,4 @@ export default async function PostPage({
                 </div>
             </>
         )
-    } catch (e: any) {
-        return <div>Failed to load posts: {e.message}</div>
-    }
 }
