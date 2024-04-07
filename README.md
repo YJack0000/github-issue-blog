@@ -35,39 +35,104 @@ npm run build
 ## 相關項目資訊
 
 ### 功能性需求
+* GitHub Login
+- [x] 使用 `next-auth` 串接 Github 登入，並且在使用者為登入時使用 Github PAT 作為取得文章需的 Token
+- [x] 登入時只取得使用者相關資訊和公開 repo 的訪問權限
+* Post Management
+- [x] 將 GitHub Issue 作為 Post
+    - [x] title 為文章標題
+    - [x] labels 為文章的分類標籤
+    - [x] body 為文章描述（顯示在文章預覽）
+    - [x] 第一個 comment 為文章主體
 
--   GitHub Login
-
-*   [x] 使用 `next-auth` 串接 Github 登入，並且在使用者為登入時使用 Github PAT 作為取得文章需的 Token
-*   [x] 登入時只取得使用者相關資訊和公開 repo 的訪問權限
-
--   Post Management
-
-*   [x] 將 GitHub Issue 作為 Post
-    -   [x] title 為文章標題
-    -   [x] labels 為文章的分類標籤
-    -   [x] body 為文章描述（顯示在文章預覽）
-    -   [x] 第一個 comment 為文章主體
-
--   列表頁
-
-*   [x] 第一次會先在 Server Side 載入 10 筆
-*   [x] 每當列表滾到底部時要自動發送 API 請求，並載入額外 10 筆，直到沒有更多文章
-
--   文章頁
-
-*   [x] 顯示文章內容，並透過 `react-markdown` 渲染出 markdown 的內容，並透過 `rehypeRaw` 防止有需 html 的東西渲染不出來
-*   [x] 使用者可以在此「編輯」、「刪除」，透過 `rehype-sanitize` 防止在 Markdown 中的 XSS 攻擊
-*   [x] 新增 / 編輯文章時,可以使用 Modal 或跳轉至新的頁面操作
-*   [x] 表單驗證: title 為必填,body 至少需要 30 字
+* 列表頁
+- [x] 第一次會先在 Server Side 載入 10 筆
+- [x] 每當列表滾到底部時要自動發送 API 請求，並載入額外 10 筆，直到沒有更多文章
+* 文章頁
+- [x] 顯示文章內容，並透過 `react-markdown` 渲染出 markdown 的內容，並透過 `rehypeRaw` 防止有需 html 的東西渲染不出來
+- [x] 使用者可以在此「編輯」、「刪除」，透過 `rehype-sanitize` 防止在 Markdown 中的 XSS 攻擊
+- [x] 新增 / 編輯文章時,可以使用 Modal 或跳轉至新的頁面操作
+- [x] 表單驗證: title 為必填,body 至少需要 30 字
 
 ### 加分條件
+- [x] 使用 TypeScript
+- [x] 使用 Next.js + App Router
+- [x] 調校 Web Vitals 評分（Lighthouse + Vercel)
+- [x] 有處理錯誤及例外狀況 (Error Handling)，可能做得不太完全
+- [x] 有部署至 Vercel
 
--   [x] 使用 TypeScript
--   [x] 使用 Next.js + App Router
--   [x] 調校 Web Vitals 評分（Lighthouse + Vercel)
--   [ ] 有處理錯誤及例外狀況 (Error Handling)，可能做得不太完全
--   [x] 有部署至 Vercel
+### 網站 SEO
+
+透過動態生成 `sitemap.xml` 並丟給 Google Search Console 來同時增加準確度與被 cache 機會。[app/sitemap.ts](https://github.com/YJack0000/github-issue-blog/blob/main/app/favicon.ico)
+
+### 網站相關評分
+
+
+### 錯誤處理原則
+
+主要錯誤處理的邏輯是希望利用 Server Action 的優勢，直接在前端接下在後端執行的 DTO，並且 catch 未預期錯誤，與整理預期中的錯誤。目的是希望這樣可以避免在前端顯示出不該顯示的錯誤，例如：Key 錯誤、後端資料庫錯誤...等等。
+
+```typescript
+// app/post/page.tsx
+const handleCreatePost = async (formData: PostFormState) => {
+        "use server"
+        const req: CreatePostRequest = {
+            title: formData.title,
+            description: formData.description,
+            body: formData.body,
+            tags: formData.tags,
+        }
+
+        let res: CreatePostResponse
+        try {
+            res = await createPost(req)
+        } catch (e: any) {
+            // 非預期錯誤
+            throw new Error("內部出現錯誤")
+        }
+
+        if (res.status !== "Success") {
+            // 預期錯誤
+            throw new Error(`${res.status}: ${res.message}`)
+        }
+
+        redirect(`/post/${res.postId}`)
+    }
+```
+
+```typescript
+// actions/edit-post
+export async function createPost({
+    title,
+    description,
+    body,
+    tags,
+}: CreatePostRequest): Promise<CreatePostResponse> {
+    if ((await getUserName()) !== (await getAuthor())) {
+        return { status: "Unauthorized", message: "Unauthorized" }
+    }
+
+    const validationError = validatePost(title, body)
+    if (validationError) // 預期錯誤
+        return {
+            status: "Failed",
+            message: validationError,
+        }
+
+    // 下面這邊的錯誤應該會是非預期的，會在外面真正使用到這個 function 時 catch 到
+    // 他們的錯誤只會顯示在後端的 Error Log 中
+    const repositoryId = await getRepositoryId()
+    const issueId = await createIssue(repositoryId, title, description)
+    const labelIds = await getLabelIds(tags)
+    await updateLabelsToIssue(issueId, labelIds)
+    await addCommentToIssue(issueId, body)
+    return {
+        status: "Success",
+        message: "Post created successfully",
+        postId: issueId,
+    }
+}
+```
 
 ### 小記錄
 
@@ -78,12 +143,12 @@ npm run build
 -   [x] 使用 Lazy Loading 來優化網頁載入速度(FMP)
 -   [x] 使用 Intersection Observer API 來觸發新的資料載入
 -   [x] 使用 next/image 來優化圖片載入速度(LCP)
--   [ ] 使用 sitmap 生成來優化 SEO -> 相對於 SSG ，這種作法就算 issue 裡面有編輯也不需要重新部署就可以動態修正，同時又可以使用 Google Search Console 來增加曝光度。
+-   [x] 使用 sitmap 生成來優化 SEO -> 相對於 SSG ，這種作法就算 issue 裡面有編輯也不需要重新部署就可以動態修正，同時又可以使用 Google Search Console 來增加曝光度。
 -   [ ] 動態生成不同篇文章的 header，例如 Open Graph, Twitter Card 等等
 
 做啥有趣的事情：
 
--   [x] 第一次用 Next.js(?
+-   [x] 第一次用 Next.js
 -   [x] 嘗試使用 Next.js 的 Server Components 作為渲染 blog post 的方式
 -   [x] 希望 Blog Post 應該要有一些文字的描述，於是將 Issue 本身作為 description，第一個 comment 才作為文章內容
 -   [x] 處理使用者沒登入的情況 -> 理論上還是要在一定限度內給他讀東西啦(Github PAT 當作備援)
