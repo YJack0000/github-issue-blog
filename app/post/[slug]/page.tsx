@@ -9,6 +9,7 @@ import {
     DeletePostResponse,
     updatePost,
     UpdatePostRequest,
+    UpdatePostResponse
 } from "@/actions/edit-post"
 import DeletePost from "@/components/post/DeletePost"
 import Breadcrumbs from "@/components/ui/Breadcrumbs"
@@ -18,9 +19,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
     const handleDeletePost = async () => {
         "use server"
         const req: DeletePostRequest = { id: params.slug }
-        const res: DeletePostResponse = await deletePost(req)
+        let res: DeletePostResponse = await deletePost(req)
 
-        if (res.status === "Success") permanentRedirect("/post")
+        try {
+            res = await deletePost(req)
+        } catch (e: any) {
+            throw new Error("內部出現錯誤")
+        }
+
+        if (res.status !== "Success") {
+            throw new Error(`${res.status}: ${res.message}`)
+        }
+
+        permanentRedirect("/post")
     }
 
     const handleEditPost = async (formData: any) => {
@@ -32,8 +43,18 @@ export default async function Page({ params }: { params: { slug: string } }) {
             body: formData.body,
             tags: formData.tags,
         }
-        const res = await updatePost(req)
-        if (res.status === "Success") redirect(`/post/${params.slug}`)
+
+        let res: UpdatePostResponse
+        try {
+            res = await updatePost(req)
+        } catch (e: any) {
+            throw new Error("內部出現錯誤")
+        }
+
+        if (res.status !== "Success") {
+            throw new Error(`${res.status}: ${res.message}`)
+        }
+        redirect(`/post/${params.slug}`)
     }
 
     const post = await fetchPostData(params.slug)

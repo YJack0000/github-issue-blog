@@ -14,6 +14,18 @@ import {
     updateLabelsToIssue,
 } from "@/actions/github"
 
+const validatePost = (title: string, body: string): string | null => {
+    if (!title) {
+        return "標題為必填"
+    }
+
+    if (!body || body.length < 30) {
+        return "內容過短"
+    }
+
+    return null
+}
+
 export type CreatePostRequest = {
     title: string
     description: string
@@ -37,6 +49,13 @@ export async function createPost({
         return { status: "Unauthorized", message: "Unauthorized" }
     }
 
+    const validationError = validatePost(title, body)
+    if (validationError)
+        return {
+            status: "Failed",
+            message: validationError,
+        }
+
     const repositoryId = await getRepositoryId()
     const issueId = await createIssue(repositoryId, title, description)
     const labelIds = await getLabelIds(tags)
@@ -44,7 +63,11 @@ export async function createPost({
     await updateLabelsToIssue(issueId, labelIds)
     console.log("addCommentToIssue")
     await addCommentToIssue(issueId, body)
-    return { status: "Success", message: "Post created successfully", postId: issueId }
+    return {
+        status: "Success",
+        message: "Post created successfully",
+        postId: issueId,
+    }
 }
 
 export type UpdatePostRequest = {
@@ -70,6 +93,13 @@ export async function updatePost({
     if ((await getUserName()) !== (await getAuthor())) {
         return { status: "Unauthorized", message: "Unauthorized" }
     }
+
+     const validationError = validatePost(title, body)
+    if (validationError)
+        return {
+            status: "Failed",
+            message: validationError,
+        }
 
     const issueId = id
     console.log("getLabelIds")

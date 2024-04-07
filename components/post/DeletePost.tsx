@@ -22,7 +22,11 @@ export default function DeleteButton({
             className={cn("btn btn-error btn-outline", className)}
             onClick={handleDeletePost}
         >
-            {!loading ? "❌" : <span className="loading loading-spinner"></span>}{" "}
+            {!loading ? (
+                "❌"
+            ) : (
+                <span className="loading loading-spinner"></span>
+            )}{" "}
             &nbsp; 刪除文章{" "}
         </button>
     )
