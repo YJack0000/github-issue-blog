@@ -116,6 +116,7 @@ export default function PostForm({
                                 )
                             }
                             disabled={loading}
+                            placeholder="文章標籤"
                         ></MultiSelect>
                         <textarea
                             placeholder="文章描述"

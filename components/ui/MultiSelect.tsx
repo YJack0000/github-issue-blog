@@ -13,6 +13,7 @@ export interface MultiSelectProps {
     defaultValue?: SelectOption[]
     options: SelectOption[]
     disabled?: boolean
+    placeholder?: string
     onChange: (selected: SelectOption[]) => void
 }
 
@@ -21,6 +22,7 @@ export default function MultiSelect({
     defaultValue,
     options,
     disabled,
+    placeholder,
     onChange,
 }: MultiSelectProps) {
     const handleChange = (newValue: unknown) => {
@@ -34,6 +36,7 @@ export default function MultiSelect({
             options={options}
             onChange={handleChange}
             isDisabled={disabled}
+            placeholder={placeholder}
         ></Select>
     )
 }
