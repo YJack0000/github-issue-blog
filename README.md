@@ -66,7 +66,13 @@ npm run build
 透過動態生成 `sitemap.xml` 並丟給 Google Search Console 來同時增加準確度與被 cache 機會。[app/sitemap.ts](https://github.com/YJack0000/github-issue-blog/blob/main/app/favicon.ico)
 
 ### 網站相關評分
+文章列表（調整前）：
+![Screenshot 2024-04-08 at 2.25.57 AM](https://hackmd.io/_uploads/HJmSrwxxC.png)
 
+文章頁面（調整前）：
+![Screenshot 2024-04-08 at 2.24.43 AM](https://hackmd.io/_uploads/rkCxrPllR.png)
+
+待更新調整方案...
 
 ### 錯誤處理原則
 
