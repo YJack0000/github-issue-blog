@@ -6,7 +6,7 @@ const GITHUB_BLOG_POST_REPO = process.env.GITHUB_BLOG_POST_REPO
 export const GET_POSTS = gql`
     query GetPosts($after: String, $labels: [String!]) {
         repository(owner: "${GITHUB_BLOG_POST_OWNER}", name: "${GITHUB_BLOG_POST_REPO}") {
-          issues(after: $after, first: 5, filterBy: {states: [OPEN], labels: $labels}, orderBy: {field: CREATED_AT, direction: DESC}) {
+          issues(after: $after, first: 10, filterBy: {states: [OPEN], labels: $labels}, orderBy: {field: CREATED_AT, direction: DESC}) {
             edges {
               node {
                 id
