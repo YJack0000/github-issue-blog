@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation"
 import PostForm, { PostFormState } from "@/components/post/PostForm"
 import InfiniteScrollPosts from "@/components/post/InfiniteScrollPosts"
 import AuthProtectedWrapper from "@/components/auth/AuthorProtectedWrapper"
@@ -28,7 +29,7 @@ export default async function PostPage({
         }
 
         const res: CreatePostResponse = await createPost(req)
-        console.log("create post response: ", res)
+        redirect(`/post/${res.postId}`)
     }
 
     try {

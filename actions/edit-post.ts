@@ -24,6 +24,7 @@ export type CreatePostRequest = {
 export type CreatePostResponse = {
     status: string
     message: string
+    postId?: string
 }
 
 export async function createPost({
@@ -43,7 +44,7 @@ export async function createPost({
     await updateLabelsToIssue(issueId, labelIds)
     console.log("addCommentToIssue")
     await addCommentToIssue(issueId, body)
-    return { status: "Success", message: "Post created successfully" }
+    return { status: "Success", message: "Post created successfully", postId: issueId }
 }
 
 export type UpdatePostRequest = {
