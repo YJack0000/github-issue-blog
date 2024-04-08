@@ -20,19 +20,18 @@ export default async function Page({ params }: { params: { slug: string } }) {
     const handleDeletePost = async () => {
         "use server"
         const req: DeletePostRequest = { id: params.slug }
-        let res: DeletePostResponse = await deletePost(req)
 
         try {
-            res = await deletePost(req)
+            const res: DeletePostResponse = await deletePost(req)
+
+            if (res.status !== "Success") {
+                throw new Error(`${res.status}: ${res.message}`)
+            }
+
+            permanentRedirect("/post")
         } catch (e: any) {
-            throw new Error("內部出現錯誤")
+            throw new Error(e.message || "內部出現錯誤")
         }
-
-        if (res.status !== "Success") {
-            throw new Error(`${res.status}: ${res.message}`)
-        }
-
-        permanentRedirect("/post")
     }
 
     const handleEditPost = async (formData: any) => {
@@ -45,16 +44,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
             tags: formData.tags,
         }
 
-        let res: UpdatePostResponse
         try {
-            res = await updatePost(req)
+            const res: UpdatePostResponse
+                = await updatePost(req)
+
+            if (res.status !== "Success") {
+                throw new Error(`${res.status}: ${res.message}`)
+            }
         } catch (e: any) {
             throw new Error("內部出現錯誤")
         }
 
-        if (res.status !== "Success") {
-            throw new Error(`${res.status}: ${res.message}`)
-        }
         redirect(`/post/${params.slug}`)
     }
 

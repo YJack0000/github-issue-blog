@@ -28,20 +28,17 @@ export default async function PostPage({
             tags: formData.tags,
         }
 
-        let res: CreatePostResponse
         try {
-            // for catch unexpected server error
-            res = await createPost(req)
+            const res: CreatePostResponse = await createPost(req)
+            if (res.status !== "Success") {
+                // for catch expected server error
+                throw new Error(`${res.status}: ${res.message}`)
+            }
+
+            redirect(`/post/${res.postId}`)
         } catch (e: any) {
-            throw new Error("內部出現錯誤")
+            throw new Error(e.message || "內部出現錯誤")
         }
-
-        if (res.status !== "Success") {
-            // for catch expected error
-            throw new Error(`${res.status}: ${res.message}`)
-        }
-
-        redirect(`/post/${res.postId}`)
     }
 
     const posts = await fetchPosts({

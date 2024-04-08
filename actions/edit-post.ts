@@ -56,17 +56,26 @@ export async function createPost({
             message: validationError,
         }
 
-    const repositoryId = await getRepositoryId()
-    const issueId = await createIssue(repositoryId, title, description)
-    const labelIds = await getLabelIds(tags)
-    console.log("updateLabelsToIssue")
-    await updateLabelsToIssue(issueId, labelIds)
-    console.log("addCommentToIssue")
-    await addCommentToIssue(issueId, body)
-    return {
-        status: "Success",
-        message: "Post created successfully",
-        postId: issueId,
+    try {
+        const repositoryId = await getRepositoryId()
+        const issueId = await createIssue(repositoryId, title, description)
+        const labelIds = await getLabelIds(tags)
+        console.log("updateLabelsToIssue")
+        await updateLabelsToIssue(issueId, labelIds)
+        console.log("addCommentToIssue")
+        await addCommentToIssue(issueId, body)
+
+        return {
+            status: "Success",
+            message: "Post created successfully",
+            postId: issueId,
+        }
+    } catch (error: any) {
+        console.error("createPost error", error)
+        return {
+            status: "Failed",
+            message: "未預期錯誤，請檢查 Log",
+        }
     }
 }
 
@@ -101,16 +110,23 @@ export async function updatePost({
             message: validationError,
         }
 
-    const issueId = id
-    console.log("getLabelIds")
-    const labelIds = await getLabelIds(tags)
-    console.log("updateIssue")
-    await updateIssue(issueId, labelIds, title, description)
-    console.log("getFirstCommentId")
-    const firstCommentId = await getFirstCommentId(issueId)
-    await updateComment(firstCommentId, body)
-
-    return { status: "Success", message: "Post updated successfully" }
+    try {
+        const issueId = id
+        console.log("getLabelIds")
+        const labelIds = await getLabelIds(tags)
+        console.log("updateIssue")
+        await updateIssue(issueId, labelIds, title, description)
+        console.log("getFirstCommentId")
+        const firstCommentId = await getFirstCommentId(issueId)
+        await updateComment(firstCommentId, body)
+        return { status: "Success", message: "Post updated successfully" }
+    } catch (error: any) {
+        console.error("updatePost error", error)
+        return {
+            status: "Failed",
+            message: "未預期錯誤，請檢查 Log",
+        }
+    }
 }
 
 export type DeletePostRequest = {
@@ -120,6 +136,7 @@ export type DeletePostRequest = {
 export type DeletePostResponse = {
     status: string
     message: string
+    postId?: string
 }
 
 export async function deletePost({
@@ -129,6 +146,18 @@ export async function deletePost({
         return { status: "Unauthorized", message: "Unauthorized" }
     }
 
-    await closeIssue(id)
-    return { status: "Success", message: `Delete of post-${id} success! ` }
+    try {
+        await closeIssue(id)
+        return {
+            status: "Success",
+            message: `Delete of post-${id} success! `,
+            postId: id,
+        }
+    } catch (error: any) {
+        console.error("deletePost error", error)
+        return {
+            status: "Failed",
+            message: "未預期錯誤，請檢查 Log",
+        }
+    }
 }
