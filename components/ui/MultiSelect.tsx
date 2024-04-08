@@ -34,12 +34,12 @@ export default function MultiSelect({
         <Select
             isMulti
             className={cn("w-full my-react-select-container", className)}
-   classNamePrefix = "my-react-select"
-            defaultValue = { defaultValue }
-            options = { options }
-            onChange = { handleChange }
-            isDisabled = { disabled }
-            placeholder = { placeholder }
-                ></Select >
+            classNamePrefix="my-react-select"
+            defaultValue={defaultValue}
+            options={options}
+            onChange={handleChange}
+            isDisabled={disabled}
+            placeholder={placeholder}
+        ></Select>
     )
-            }
+}

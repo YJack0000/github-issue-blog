@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import MarkdownEditor from "@/components/post/MarkdownEditor"
-import MultiSelect from "@/components/ui/MultiSelect"
+import MultiSelect, { SelectOption } from "@/components/ui/MultiSelect"
 import ErrorAlert from "@/components/ui/ErrorAlert"
 import { getTags } from "@/actions/tag"
 
@@ -58,7 +58,7 @@ export default function PostForm({
             if (formAction) {
                 await formAction(form)
             }
-            ; (document.getElementById("post_form") as any).close()
+            ;(document.getElementById("post_form") as any).close()
         } catch (e: any) {
             setErrorMessage(e.message)
             setTimeout(() => {
@@ -70,7 +70,7 @@ export default function PostForm({
         }
     }
 
-    const [tags, setTags] = useState<Option[]>([])
+    const [tags, setTags] = useState<SelectOption[]>([])
     const fetchTags = async () => {
         const data = await getTags()
         setTags(

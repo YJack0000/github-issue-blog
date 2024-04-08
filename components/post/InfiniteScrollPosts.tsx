@@ -51,7 +51,7 @@ export default function InfiniteScrollPost({
             setPosts(initPosts)
             setCursor(initPosts[initPosts.length - 1].cursor)
         }
-    }, [initPosts])
+    }, [initPosts, posts])
 
     useEffect(() => {
         if (inView) {
