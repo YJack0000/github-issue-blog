@@ -101,69 +101,16 @@ npm run build
 
 ### 錯誤處理原則
 
-主要錯誤處理的邏輯是希望利用 Server Action 的優勢，直接在前端接下在後端執行的 DTO，並且 catch 未預期錯誤，與整理預期中的錯誤。目的是希望這樣可以避免在前端顯示出不該顯示的錯誤，例如：Key 錯誤、後端資料庫錯誤...等等。
+主要錯誤處理的邏輯是希望利用 Server Action 的優勢，直接在前端接下在後端執行的 DTO，並且 throw 出錯誤。目的是希望這樣可以避免在前端顯示出不該顯示的錯誤，例如：Key 錯誤、後端資料庫錯誤...等等。
 
-```typescript
-// app/post/page.tsx
-const handleCreatePost = async (formData: PostFormState) => {
-        "use server"
-        const req: CreatePostRequest = {
-            title: formData.title,
-            description: formData.description,
-            body: formData.body,
-            tags: formData.tags,
-        }
+**可以顯示出非預期錯誤或是預期的 validation error**
+![Screenshot 2024-04-08 at 10.13.49 AM](https://hackmd.io/_uploads/BJK1Q0xeC.png)
 
-        let res: CreatePostResponse
-        try {
-            res = await createPost(req)
-        } catch (e: any) {
-            // 非預期錯誤
-            throw new Error("內部出現錯誤")
-        }
+![Screenshot 2024-04-08 at 10.12.43 AM](https://hackmd.io/_uploads/r15oM0elC.png)
 
-        if (res.status !== "Success") {
-            // 預期錯誤
-            throw new Error(`${res.status}: ${res.message}`)
-        }
-
-        redirect(`/post/${res.postId}`)
-    }
-```
-
-```typescript
-// actions/edit-post
-export async function createPost({
-    title,
-    description,
-    body,
-    tags,
-}: CreatePostRequest): Promise<CreatePostResponse> {
-    if ((await getUserName()) !== (await getAuthor())) {
-        return { status: "Unauthorized", message: "Unauthorized" }
-    }
-
-    const validationError = validatePost(title, body)
-    if (validationError) // 預期錯誤
-        return {
-            status: "Failed",
-            message: validationError,
-        }
-
-    // 下面這邊的錯誤應該會是非預期的，會在外面真正使用到這個 function 時 catch 到
-    // 他們的錯誤只會顯示在後端的 Error Log 中
-    const repositoryId = await getRepositoryId()
-    const issueId = await createIssue(repositoryId, title, description)
-    const labelIds = await getLabelIds(tags)
-    await updateLabelsToIssue(issueId, labelIds)
-    await addCommentToIssue(issueId, body)
-    return {
-        status: "Success",
-        message: "Post created successfully",
-        postId: issueId,
-    }
-}
-```
+**參考**
+[`app/post/page.tsx`](https://github.com/YJack0000/github-issue-blog/blob/main/app/post/page.tsx)
+[`actions/edit-post.tsx`](https://github.com/YJack0000/github-issue-blog/blob/main/actions/edit-post.tsx)
 
 ### 小記錄
 
