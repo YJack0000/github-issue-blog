@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import MarkdownEditor from "@/components/post/MarkdownEditor"
 import MultiSelect from "@/components/ui/MultiSelect"
 import ErrorAlert from "@/components/ui/ErrorAlert"
+import { getTags } from "@/actions/tag"
 
 export interface PostFormProps {
     header: string
@@ -69,6 +70,20 @@ export default function PostForm({
         }
     }
 
+    const [tags, setTags] = useState<Option[]>([])
+    const fetchTags = async () => {
+        const data = await getTags()
+        setTags(
+            data.map((t: any) => {
+                return { value: t, label: t }
+            })
+        )
+    }
+
+    useEffect(() => {
+        fetchTags()
+    }, [])
+
     const defaultTags = form.tags.map((t) => ({ value: t, label: t }))
     return (
         <>
@@ -105,10 +120,7 @@ export default function PostForm({
                         />
                         <MultiSelect
                             defaultValue={defaultTags}
-                            options={[
-                                { value: "test", label: "test" },
-                                { value: "tt", label: "tt" },
-                            ]}
+                            options={tags}
                             onChange={(selected: any) =>
                                 updateForm(
                                     "tags",
