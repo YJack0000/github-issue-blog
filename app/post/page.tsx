@@ -36,7 +36,7 @@ export default async function PostPage({
                 return { error: `${res.status}: ${res.message}` }
             }
         } catch (e: any) {
-            return { error: "內部出現錯誤" }
+            return { error: `${e.message}` }
         }
         redirect(`/post/${res.postId}`)
     }

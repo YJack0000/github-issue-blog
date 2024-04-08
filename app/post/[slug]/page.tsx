@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             }
         } catch (e: any) {
             console.log(JSON.stringify(e))
-            return { error: "內部出現錯誤" }
+            return { error: `${e.message}` }
         }
         redirect("/post")
     }
@@ -53,7 +53,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 }
             }
         } catch (e: any) {
-            return { error: "內部出現錯誤" }
+            return { error: `${e.message}` }
         }
         redirect(`/post/${params.slug}`)
     }
