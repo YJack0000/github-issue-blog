@@ -63,7 +63,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <Breadcrumbs title={post.title} />
             <section className="mt-1 mb-6">
                 <div className="relative">
-                    <div className="rounded-box mt-2 mb-4 h-96 w-full object-cover brightness-50">
+                    <div className="relative rounded-box mt-2 mb-4 h-96 w-full object-cover brightness-50">
                         <Image
                             src="/img/bg.png"
                             alt="photo replacement of the post"
