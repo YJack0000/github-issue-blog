@@ -1,4 +1,7 @@
-# Github blog
+# Dcard 2024 Frontend Intern Homework: Github Issue Blog
+
+![GitHub deployments](https://img.shields.io/github/deployments/YJack0000/github-issue-blog/production?logo=vercel&label=vercel)
+![GitHub](https://img.shields.io/github/license/YJack0000/github-issue-blog)
 
 使用 Github Issues 作為後端，並透過 Next.js 作為網頁渲染框架。
 
