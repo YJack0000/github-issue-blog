@@ -37,7 +37,6 @@ function CommentChild({
 }
 
 export default function Comments({ comments }: { comments: PostComment[] }) {
-    console.log(comments)
     return (
         <>
             <div className="card w-full bg-base-500 shadow-xl">
