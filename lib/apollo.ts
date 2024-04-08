@@ -11,9 +11,11 @@ const createApolloClient = () =>
             dataIdFromObject(responseObject) {
                 switch (responseObject.__typename) {
                     case "Repository":
-                        // 假設每個Repository對象都有owner和name字段
+                        // 每個Repository對象都有owner和name字段
                         return `Repository:${responseObject.owner}:${responseObject.name}`
-                    // 你可以為其他類型添加更多的規則
+                    case "Issue":
+                        // 每個Issue對象都有id字段
+                        return `Issue:${responseObject.id}`
                     default:
                         return defaultDataIdFromObject(responseObject)
                 }
