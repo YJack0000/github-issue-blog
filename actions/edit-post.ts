@@ -73,7 +73,7 @@ export async function createPost({
     } catch (error: any) {
         console.error("createPost error", error)
         return {
-            status: "Failed",
+            status: "UnknowError",
             message: "未預期錯誤，請檢查 Log",
         }
     }
@@ -123,7 +123,7 @@ export async function updatePost({
     } catch (error: any) {
         console.error("updatePost error", error)
         return {
-            status: "Failed",
+            status: "UnknowError",
             message: "未預期錯誤，請檢查 Log",
         }
     }
@@ -156,7 +156,7 @@ export async function deletePost({
     } catch (error: any) {
         console.error("deletePost error", error)
         return {
-            status: "Failed",
+            status: "UnknowError",
             message: "未預期錯誤，請檢查 Log",
         }
     }
