@@ -5,7 +5,8 @@
 
 使用 Github Issues 作為後端，並透過 Next.js 作為網頁渲染框架。
 
-使用技術：
+
+## 使用技術
 
 -   Next.js(React.js)
     -   Server Components
@@ -15,7 +16,57 @@
 -   GraphQL(apollo-client)
 -   eslint + prettier
 
-## 使用專案
+## 專案架構
+
+去除掉常見的設定相關檔案，主要專案中有這幾個目錄。
+```
+.
+├── actions
+├── app
+|   ├── api
+│   │   └── auth
+│   │       └── [...nextauth]
+│   │           └── route.ts
+│   ├── post
+│   └── sitemap.ts
+├── components
+│   ├── Footer.tsx
+│   ├── Header.tsx
+│   ├── UserButton.tsx
+│   ├── auth/
+│   ├── post/
+│   └── ui/
+├── config
+│   └── auth.ts
+├── graphql
+│   └── github.ts
+├── lib
+│   ├── apollo.ts
+│   └── utils.ts
+└── types
+```
+
+### actions/
+`actions/` 檔案夾中存放對於不同操作的 Server Action，對於不同的 Server Action 會設計屬於他們的 DTO，用於資料傳遞到 Client Side。
+
+例如 [`actions/edit-post.tsx`](https://github.com/YJack0000/github-issue-blog/blob/main/actions/edit-post.tsx) 中就存放著對於文章資料有變動相關的動作，以 `createPost` 為例，他就會有 `CreatePostReqest` 和 `CreatePostResponse` 兩種 DTO，可以在前端判斷錯誤和接收資訊時更加方便。
+
+### app/
+`app/` 檔案夾中存放對於不同頁面的 React Page 並且透過 `App Router` 來設計不同的頁面。在這之中比較需要注意的是我是在最外層 `app/sitemap.ts` 就將 Sitemap 生成完成，並不是 nested 的方式。
+
+### components/
+`components/` 檔案夾中存放對於不同頁面的 React Component，並且對於某個 page 所需要的 Component，我不會直接寫在 App Router 中，而是會在 `components/[page]` 中設計好，因為對我來說這樣可以讓 App router 更清楚展現頁面的路徑而不至於混亂。
+
+### config/
+`config/` 檔案夾中存放對於不同設定的檔案，例如 `auth.ts` 就是對於 `next-auth` 的設定。
+
+### graphql/
+`graphql/` 檔案檔案中存放對於不同 GraphQL Query 的設定，例如 `github.ts` 就是對於 Github GraphQL API 的設定。會這樣做是因為 GraphQL 的長度通常都蠻長的，希望有個統一個地方去管理 graphql 的 query。
+
+### lib/
+`lib/` 在這裡存放一些對於不同功能的設定，例如 `apollo.ts` 就是對於 Apollo Client 的設定，`utils.ts` 就是一些常用的 function，例如 cn（這個專案裡也只有用到這個）。雖然 apollo client 有對於 next.js 的試驗型套件 [next-with-apollo](https://github.com/lfades/next-with-apollo) ，目的應該也是希望在一個 Server Side 共享同一個 client，但我目前是自己實作單體式架構，確保他都會使用到同一個 client。
+
+## 啟動專案
 
 要啟動專案，首先要先安裝相依套件：
 
@@ -104,6 +155,7 @@ npm run build
 主要錯誤處理的邏輯是希望利用 Server Action 的優勢，直接在前端接下在後端執行的 DTO，並且 throw 出錯誤。目的是希望這樣可以避免在前端顯示出不該顯示的錯誤，例如：Key 錯誤、後端資料庫錯誤...等等。
 
 **可以顯示出非預期錯誤或是預期的 validation error**
+
 ![Screenshot 2024-04-08 at 10.13.49 AM](https://hackmd.io/_uploads/BJK1Q0xeC.png)
 
 ![Screenshot 2024-04-08 at 10.12.43 AM](https://hackmd.io/_uploads/r15oM0elC.png)
