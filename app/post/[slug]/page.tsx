@@ -1,4 +1,4 @@
-import { permanentRedirect, redirect } from "next/navigation"
+import { redirect } from "next/navigation"
 import Image from "next/image"
 import { fetchPostData } from "@/actions/post"
 import PostForm from "@/components/post/PostForm"
@@ -27,11 +27,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
             if (res.status !== "Success") {
                 throw new Error(`${res.status}: ${res.message}`)
             }
-
-            permanentRedirect("/post")
         } catch (e: any) {
+            console.log(JSON.stringify(e))
             throw new Error(e.message || "內部出現錯誤")
         }
+        redirect("/post")
     }
 
     const handleEditPost = async (formData: any) => {
@@ -45,8 +45,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         }
 
         try {
-            const res: UpdatePostResponse
-                = await updatePost(req)
+            const res: UpdatePostResponse = await updatePost(req)
 
             if (res.status !== "Success") {
                 throw new Error(`${res.status}: ${res.message}`)
@@ -54,7 +53,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
         } catch (e: any) {
             throw new Error("內部出現錯誤")
         }
-
         redirect(`/post/${params.slug}`)
     }
 
