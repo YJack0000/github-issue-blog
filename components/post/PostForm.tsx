@@ -15,7 +15,7 @@ export interface PostFormProps {
         description: string
         body: string
     }
-    formAction?: (form: PostFormState) => Promise<void>
+    formAction?: (form: PostFormState) => Promise<{ error: string } | null>
 }
 
 export type PostFormState = {
@@ -56,9 +56,10 @@ export default function PostForm({
         setLoading(true)
         try {
             if (formAction) {
-                await formAction(form)
+                const res = await formAction(form)
+                if (res && res.error) throw new Error(res.error)
             }
-            ;(document.getElementById("post_form") as any).close()
+            ; (document.getElementById("post_form") as any).close()
         } catch (e: any) {
             setErrorMessage(e.message)
             setTimeout(() => {
@@ -100,7 +101,7 @@ export default function PostForm({
                 </button>
             </div>
             <dialog id="post_form" className="modal">
-                <div className="modal-box w-11/12 modal-middle max-w-5xl">
+                <div className="modal-box w-11/12 modal-middle !max-w-5xl">
                     <h2 className="font-bold text-lg my-4">
                         {header} #{form.id}
                     </h2>
@@ -160,7 +161,11 @@ export default function PostForm({
                     </form>
                 </div>
 
-                <ErrorAlert message={errorMessage} isVisible={!!errorMessage} />
+                <ErrorAlert
+                    className="max-w-64"
+                    message={errorMessage}
+                    isVisible={!!errorMessage}
+                />
                 <form method="dialog" className="modal-backdrop">
                     <button>關閉</button>
                 </form>

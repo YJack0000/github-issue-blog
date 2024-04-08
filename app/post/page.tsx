@@ -33,10 +33,10 @@ export default async function PostPage({
             res = await createPost(req)
             if (res.status !== "Success") {
                 // for catch expected server error
-                throw new Error(`${res.status}: ${res.message}`)
+                return { error: `${res.status}: ${res.message}` }
             }
         } catch (e: any) {
-            throw new Error(e.message || "內部出現錯誤")
+            return { error: "內部出現錯誤" }
         }
         redirect(`/post/${res.postId}`)
     }

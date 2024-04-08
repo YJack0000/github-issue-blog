@@ -1,14 +1,21 @@
+import { cn } from "@/lib/utils"
+
 export default function ErrorAlert({
+    className,
     message,
     isVisible,
 }: {
+        className?: string | undefined
     message: string | undefined
     isVisible: boolean
 }) {
     return (
         <div
             role="alert"
-            className="alert alert-error w-auto fixed right-4 bottom-4 transition-opacity duration-500"
+            className={cn(
+                "alert alert-error w-auto fixed right-4 bottom-4 transition-opacity duration-500",
+                className
+            )}
             style={{ opacity: isVisible ? 1 : 0 }}
         >
             <svg
