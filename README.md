@@ -20,6 +20,28 @@
 npm install
 ```
 
+設定好相關環境變數，在 `.env` 中，可以參考 `.env.example`：
+```
+// 部落格中的相關資訊，沒有設定了話預設就是我的 XD
+BLOG_NAME=My Blog
+LINKEDIN_URL=https://www.linkedin.com/in/宇傑-鄭-3941181a3
+GITHUB_URL=https://github.com/YJack0000
+
+// blog post 來源 repo
+GITHUB_BLOG_POST_OWNER=YJack0000
+GITHUB_BLOG_POST_REPO=github-issue-blog-post
+
+// 參考 https://next-auth.js.org/configuration/options#secret 生成
+NEXTAUTH_SECRET=<your-app-secret>
+
+// Github App，用於給人登入並且檢查是否可以在線編輯
+GITHUB_ID=<your-github-app-client-id>
+GITHUB_SECRET=<your-github-app-client-secret>
+
+// 個人 token 給沒有登入使用者也可以看文章
+GITHUB_PAT=<your-github-personal-access-token>
+```
+
 透過以下指令來啟動專案：
 
 ```bash
