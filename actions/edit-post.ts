@@ -13,6 +13,9 @@ import {
     updateIssue,
     updateLabelsToIssue,
 } from "@/actions/github"
+import { getClient } from "@/lib/apollo"
+
+const client = getClient()
 
 const validatePost = (title: string, body: string): string | null => {
     if (!title) {
@@ -64,6 +67,8 @@ export async function createPost({
         await updateLabelsToIssue(issueId, labelIds)
         console.log("addCommentToIssue")
         await addCommentToIssue(issueId, body)
+
+        client.resetStore()
 
         return {
             status: "Success",
@@ -119,6 +124,9 @@ export async function updatePost({
         console.log("getFirstCommentId")
         const firstCommentId = await getFirstCommentId(issueId)
         await updateComment(firstCommentId, body)
+
+        client.resetStore()
+
         return { status: "Success", message: "Post updated successfully" }
     } catch (error: any) {
         console.error("updatePost error", error)
@@ -148,6 +156,9 @@ export async function deletePost({
 
     try {
         await closeIssue(id)
+
+        client.resetStore()
+
         return {
             status: "Success",
             message: `Delete of post-${id} success! `,
