@@ -7,6 +7,7 @@ let apolloClient: ApolloClient<any> | null = null
 const createApolloClient = () =>
     new ApolloClient({
         uri: "https://api.github.com/graphql",
+        headers: { accept: "application/vnd.github.bane-preview+json" },
         cache: new InMemoryCache({
             dataIdFromObject(responseObject) {
                 switch (responseObject.__typename) {

@@ -1,5 +1,6 @@
 "use server"
 import { getServerSession } from "next-auth/next"
+import { getAuthor, getUserName, getRepositoryId } from "@/actions/github"
 import { authOptions } from "@/config/auth"
 import { getClient } from "@/lib/apollo"
 import { CREATE_TAG, GET_TAGS } from "@/graphql/github"
@@ -25,19 +26,37 @@ export const getTags = async (): Promise<string[]> => {
     return data.repository.labels.edges.map((edge: any) => edge.node.name)
 }
 
-export const createTag = async (name: string): Promise<void> => {
-    const session = await getServerSession(authOptions)
-    const { errors } = await client.mutate({
-        mutation: CREATE_TAG,
-        variables: { name },
-        context: {
-            headers: {
-                Authorization: `bearer ${session?.accessToken}`,
-            },
-        },
-    })
-    if (errors) {
-        console.error("GraphQL errors:", errors)
-        throw new Error(errors.map((error) => error.message).join(", "))
+type CreateTagResponse = {
+    status: string
+    message: string
+}
+
+export const createTag = async (name: string): Promise<CreateTagResponse> => {
+    if ((await getUserName()) !== (await getAuthor())) {
+        return { status: "Unauthorized", message: "未認證使用者" }
     }
+
+    try {
+        const session = await getServerSession(authOptions)
+        const repositoryId = await getRepositoryId()
+        console.log("repositoryId: ", repositoryId)
+        const { errors } = await client.mutate({
+            mutation: CREATE_TAG,
+            variables: { repositoryId, name },
+            context: {
+                headers: {
+                    Authorization: `bearer ${session?.accessToken}`,
+                },
+            },
+        })
+        if (errors) {
+            console.error("GraphQL errors:", errors)
+            throw new Error(errors.map((error) => error.message).join(", "))
+        }
+    } catch (error) {
+        console.error("An error occurred when createTag info: ", error)
+        return { status: "Failed", message: "未預期錯誤" }
+    }
+
+    return { status: "Success", message: "新增標籤成功" }
 }

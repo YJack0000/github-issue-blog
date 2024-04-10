@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import MarkdownEditor from "@/components/post/MarkdownEditor"
 import MultiSelect, { SelectOption } from "@/components/ui/MultiSelect"
 import ErrorAlert from "@/components/ui/ErrorAlert"
-import { getTags } from "@/actions/tag"
+import { createTag, getTags } from "@/actions/tag"
 
 export interface PostFormProps {
     header: string
@@ -59,7 +59,7 @@ export default function PostForm({
                 const res = await formAction(form)
                 if (res && res.error) throw new Error(res.error)
             }
-            ;(document.getElementById("post_form") as any).close()
+            ; (document.getElementById("post_form") as any).close()
         } catch (e: any) {
             setErrorMessage(e.message)
             setTimeout(() => {
@@ -79,6 +79,20 @@ export default function PostForm({
                 return { value: t, label: t }
             })
         )
+    }
+
+    const handleCreateTag = async (newValue: string) => {
+        try {
+            const res = await createTag(newValue)
+            if (res.status !== "Success") throw new Error(res.message)
+            setTags((prev) => [...prev, { value: newValue, label: newValue }])
+        } catch (e: any) {
+            setErrorMessage(e.message)
+            setTimeout(() => {
+                // hide error message after 5 seconds
+                setErrorMessage(undefined)
+            }, 5000)
+        }
     }
 
     useEffect(() => {
@@ -130,7 +144,9 @@ export default function PostForm({
                             }
                             disabled={loading}
                             placeholder="文章標籤"
+                            onCreate={handleCreateTag}
                         ></MultiSelect>
+                        {form.tags}
                         <textarea
                             placeholder="文章描述"
                             value={form.description}

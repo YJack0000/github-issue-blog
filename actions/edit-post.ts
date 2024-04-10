@@ -49,7 +49,7 @@ export async function createPost({
     tags,
 }: CreatePostRequest): Promise<CreatePostResponse> {
     if ((await getUserName()) !== (await getAuthor())) {
-        return { status: "Unauthorized", message: "Unauthorized" }
+        return { status: "Unauthorized", message: "未認證使用者" }
     }
 
     const validationError = validatePost(title, body)
@@ -105,7 +105,7 @@ export async function updatePost({
     tags,
 }: UpdatePostRequest): Promise<UpdatePostResponse> {
     if ((await getUserName()) !== (await getAuthor())) {
-        return { status: "Unauthorized", message: "Unauthorized" }
+        return { status: "Unauthorized", message: "未認證使用者" }
     }
 
     const validationError = validatePost(title, body)
@@ -151,7 +151,7 @@ export async function deletePost({
     id,
 }: DeletePostRequest): Promise<DeletePostResponse> {
     if ((await getUserName()) !== (await getAuthor())) {
-        return { status: "Unauthorized", message: "Unauthorized" }
+        return { status: "Unauthorized", message: "未認證使用者" }
     }
 
     try {

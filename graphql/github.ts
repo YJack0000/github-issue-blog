@@ -61,14 +61,16 @@ export const GET_TAGS = gql`
     `
 
 export const CREATE_TAG = gql`
-    mutation CreateTag($name: String!) {
-        createLabel(input: {repositoryId: "${GITHUB_BLOG_POST_REPO}", name: $name, color: "000000"}) {
+    mutation CreateTag($repositoryId: ID!, $name: String!) {
+        createLabel(
+            input: { repositoryId: $repositoryId, name: $name, color: "000000" }
+        ) {
             label {
-                clientMutationId
+                name
             }
         }
     }
-    `
+`
 
 export const GET_POST_DATA = gql`
     query GetPostData($id: ID!) {
