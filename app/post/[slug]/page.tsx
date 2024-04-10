@@ -22,10 +22,7 @@ export async function generateMetadata({
 }: Readonly<{ params: { slug: string } }>) {
     const post = await fetchPostData(params.slug)
 
-    const metadata = getMetadata(
-        post.title,
-        post.description,
-    )
+    const metadata = getMetadata(post.title, post.description)
     return metadata
 }
 

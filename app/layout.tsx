@@ -14,8 +14,10 @@ const BLOG_NAME = process.env.BLOG_NAME as string
 const GITHUB_URL = process.env.GITHUB_URL as string
 const LINKEDIN_URL = process.env.LINKEDIN_URL as string
 
-export const metadata: Metadata = getMetadata(BLOG_NAME, "一個使用 Github Issue 作為後台的部落格")
-
+export const metadata: Metadata = getMetadata(
+    BLOG_NAME,
+    "一個使用 Github Issue 作為後台的部落格"
+)
 
 export default function RootLayout({
     children,

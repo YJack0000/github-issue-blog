@@ -59,7 +59,7 @@ export default function PostForm({
                 const res = await formAction(form)
                 if (res && res.error) throw new Error(res.error)
             }
-            ; (document.getElementById("post_form") as any).close()
+            ;(document.getElementById("post_form") as any).close()
         } catch (e: any) {
             setErrorMessage(e.message)
             setTimeout(() => {
