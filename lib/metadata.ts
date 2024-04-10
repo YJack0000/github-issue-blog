@@ -16,7 +16,7 @@ export const getMetadata = (
                 {
                     url: imageUrl ?? "/img/og.png",
                     width: 800,
-                    height: 526
+                    height: 526,
                 },
             ],
         },
