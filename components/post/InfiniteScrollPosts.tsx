@@ -38,20 +38,12 @@ export default function InfiniteScrollPost({
                 setCursor(null)
             } else {
                 setPosts([...posts, ...newPosts])
-                setCursor(newPosts[posts.length - 1].cursor)
+                setCursor(newPosts[newPosts.length - 1].cursor)
             }
         } catch (e: any) {
             console.log("Error:", e)
         }
     }, [posts, cursor, selectedTag])
-
-    // for server side new initPosts
-    useEffect(() => {
-        if (initPosts !== posts) {
-            setPosts(initPosts)
-            setCursor(initPosts[initPosts.length - 1].cursor)
-        }
-    }, [initPosts, posts])
 
     useEffect(() => {
         if (inView) {
