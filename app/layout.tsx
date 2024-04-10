@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react"
 import Header from "@/components/Header"
 import "./globals.css"
 import Footer from "@/components/Footer"
+import { getMetadata } from "@/lib/metadata"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -13,10 +14,8 @@ const BLOG_NAME = process.env.BLOG_NAME as string
 const GITHUB_URL = process.env.GITHUB_URL as string
 const LINKEDIN_URL = process.env.LINKEDIN_URL as string
 
-export const metadata: Metadata = {
-    title: BLOG_NAME,
-    description: `A blog about web development and programming.`,
-}
+export const metadata: Metadata = getMetadata(BLOG_NAME, "一個使用 Github Issue 作為後台的部落格")
+
 
 export default function RootLayout({
     children,

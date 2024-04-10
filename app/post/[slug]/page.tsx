@@ -15,6 +15,19 @@ import DeletePost from "@/components/post/DeletePost"
 import Breadcrumbs from "@/components/ui/Breadcrumbs"
 import PostRenderer from "@/components/post/PostRenderer"
 import Comments from "@/components/post/Comments"
+import { getMetadata } from "@/lib/metadata"
+
+export async function generateMetadata({
+    params,
+}: Readonly<{ params: { slug: string } }>) {
+    const post = await fetchPostData(params.slug)
+
+    const metadata = getMetadata(
+        post.title,
+        post.description,
+    )
+    return metadata
+}
 
 export default async function Page({ params }: { params: { slug: string } }) {
     const handleDeletePost = async () => {

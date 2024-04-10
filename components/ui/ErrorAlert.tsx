@@ -5,7 +5,7 @@ export default function ErrorAlert({
     message,
     isVisible,
 }: {
-        className?: string | undefined
+    className?: string | undefined
     message: string | undefined
     isVisible: boolean
 }) {
