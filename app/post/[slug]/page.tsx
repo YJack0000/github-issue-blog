@@ -94,15 +94,18 @@ export default async function Page({ params }: { params: { slug: string } }) {
                             {post.author.name}
                         </div>
                         <div>Sun Apr 30 2023</div>
-                        <AuthProtectedWrapper holder={null}>
+                    </div>
+                    <AuthProtectedWrapper holder={null}>
+                        <div className="w-full flex">
                             <PostForm
                                 header="📝 編輯文章"
                                 formData={{ ...post }}
                                 formAction={handleEditPost}
                             />
+                            <div className="w-4"></div>
                             <DeletePost onClick={handleDeletePost} />
-                        </AuthProtectedWrapper>
-                    </div>
+                        </div>
+                    </AuthProtectedWrapper>
                     <PostRenderer content={post.body} />
                     <div className="mt-4"></div>
                     <Comments comments={post.comments} />
