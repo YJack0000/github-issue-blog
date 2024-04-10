@@ -25,9 +25,6 @@ export default async function UserButton() {
                 className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
                 <li>
-                    <a>設定</a>
-                </li>
-                <li>
                     <SignOut />
                 </li>
             </ul>
