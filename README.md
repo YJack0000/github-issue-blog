@@ -141,13 +141,6 @@ npm run build
 
 透過動態生成 `sitemap.xml` 並丟給 Google Search Console 來同時增加準確度與被 cache 機會。[app/sitemap.ts](https://github.com/YJack0000/github-issue-blog/blob/main/app/favicon.ico)
 
-### 網站相關評分
-文章列表（調整前）：
-![Screenshot 2024-04-08 at 2.25.57 AM](https://hackmd.io/_uploads/HJmSrwxxC.png)
-
-文章頁面（調整前）：
-![Screenshot 2024-04-08 at 2.24.43 AM](https://hackmd.io/_uploads/rkCxrPllR.png)
-
 待更新調整方案...
 
 ### 錯誤處理
@@ -168,11 +161,11 @@ npm run build
 
 -   [x] 使用 DaisyUI 來快速建立網頁，並且用 DaisyUI 內建的功能提供 Dark/Light mode 一定的支援。
 -   [x] 使用 API Router 來做一些簡單的 API -> 新增/編輯相關，因為 Server Action 要用 form 傳送陣列比較麻煩億點點
--   [x] 使用 Lazy Loading 來優化網頁載入速度(FMP)
 -   [x] 使用 Intersection Observer API 來觸發新的資料載入
 -   [x] 使用 next/image 來優化圖片載入速度(LCP)
--   [x] 使用 sitmap 生成來優化 SEO -> 相對於 SSG ，這種作法就算 issue 裡面有編輯也不需要重新部署就可以動態修正，同時又可以使用 Google Search Console 來增加曝光度。
--   [ ] 動態生成不同篇文章的 header，例如 Open Graph, Twitter Card 等等
+-   [x] 使用 sitmap 生成來優化 SEO。
+-   [x] 動態生成不同篇文章的 header，例如 Open Graph, Twitter Card 等等。
+    - [ ] 目前動態生成圖片有 bug，待修正
 
 做啥有趣的事情：
 
