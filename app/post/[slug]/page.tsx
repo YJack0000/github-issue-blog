@@ -71,7 +71,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                             alt="photo replacement of the post"
                             fill
                             sizes="90vw"
-                            priority={false}
+                            priority
                         />
                     </div>
                     <h1 className="absolute bottom-0 mb-6 max-w-2xl px-8 text-white text-4xl lg:text-5xl font-bold leading-normal">
